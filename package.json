@@ -4,6 +4,7 @@
   "description": "MongoDB Express Node TypeScript REST API for travel recommendations db",
   "main": "index.js",
   "scripts": {
+    "dev": "npx nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,7 +27,7 @@
     "ignore": [
       "node_modules"
     ]
-  },  
+  },
   "dependencies": {
     "cross-env": "^7.0.3",
     "dotenv-flow": "^4.1.0",
