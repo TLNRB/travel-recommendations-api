@@ -1,0 +1,19 @@
+{
+  "name": "travel-recommendations-api",
+  "version": "1.0.0",
+  "description": "MongoDB Express Node TypeScript REST API for travel recommendations db",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TLNRB/travel-recommendations-api.git"
+  },
+  "author": "tlnrb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TLNRB/travel-recommendations-api/issues"
+  },
+  "homepage": "https://github.com/TLNRB/travel-recommendations-api#readme"
+}
