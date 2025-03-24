@@ -4,6 +4,7 @@
   "description": "MongoDB Express Node TypeScript REST API for travel recommendations db",
   "main": "index.js",
   "scripts": {
+    "build": "rm -rf ./dist && tsc",
     "dev": "npx nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
