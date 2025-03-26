@@ -12,9 +12,9 @@ export interface User extends Document {
    bio?: string | null,
    country?: string | null,
    city?: string | null,
-   socials?: Social[],
-   recommendations?: Schema.Types.ObjectId[],
+   socials?: Social[] | null,
+   recommendations?: Schema.Types.ObjectId[] | null,
    role: Schema.Types.ObjectId,
-   collections?: Schema.Types.ObjectId[],
+   collections?: Schema.Types.ObjectId[] | null,
    registerDate: Date
 }
