@@ -82,6 +82,65 @@ export async function registerUser(req: Request, res: Response): Promise<void> {
 }
 
 /**
+ * Login a user
+ * @param req 
+ * @param res 
+ */
+export async function loginUser(req: Request, res: Response): Promise<void> {
+   try {
+      // Validate user input
+      const { error } = validateUserLoginData(req.body);
+      if (error) {
+         res.status(400).json({ error: error.details[0].message });
+         return;
+      }
+
+      // Sanitize user input
+      req.body.email = xss(req.body.email);
+      req.body.password = xss(req.body.password);
+
+      await connect();
+
+      // Find the user by email
+      const user = await userModel.findOne({ email: req.body.email });
+      if (!user) {
+         res.status(400).json({ error: 'Invalid email or password!' });
+         return;
+      }
+      else {
+         // Check if the password is correct
+         const validPassword: boolean = await bcrypt.compare(req.body.password, user.passwordHash);
+         if (!validPassword) {
+            res.status(400).json({ error: 'Invalid email or password!' });
+            return;
+         }
+
+         // Create and assign a token
+         const userId: string = user.id;
+         const token = jwt.sign(
+            {
+               firstName: user.firstName,
+               lastName: user.lastName,
+               username: user.username,
+               email: user.email,
+               id: userId,
+            },
+            process.env.TOKEN_SECRET as string,
+            { expiresIn: '2h' }
+         );
+
+         res.status(200).header('auth-token', token).json({ error: null, data: { userId, token } });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error logging in the user! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
  * Validate user data (firstName, lastName, username, email, password)
  * @param data 
  */
@@ -104,7 +163,7 @@ export function validateUserRegistrationData(data: User): ValidationResult {
 export function validateUserLoginData(data: User): ValidationResult {
    const schema = Joi.object({
       email: Joi.string().email().min(6).max(255).required(),
-      passwordHash: Joi.string().min(6).max(20).required(),
+      password: Joi.string().min(6).max(20).required(),
    })
 
    return schema.validate(data);
