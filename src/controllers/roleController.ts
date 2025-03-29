@@ -13,15 +13,15 @@ import { connect, disconnect } from '../repository/database';
  */
 export async function createRole(req: Request, res: Response): Promise<void> {
    try {
-      // Sanitize user input
-      req.body.name = xss(req.body.name);
-
       // Validate user input
       const { error } = validateRoleData(req.body);
       if (error) {
          res.status(400).json({ error: error.details[0].message });
          return;
       }
+
+      // Sanitize user input
+      req.body.name = xss(req.body.name);
 
       await connect();
 

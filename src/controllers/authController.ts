@@ -16,19 +16,18 @@ import { connect, disconnect } from '../repository/database';
  */
 export async function registerUser(req: Request, res: Response): Promise<void> {
    try {
+      // Validate user input
+      const { error } = validateUserRegistrationData(req.body);
+      if (error) {
+         res.status(400).json({ error: error.details[0].message });
+         return;
+      }
+
       // Sanitize user input
       req.body.firstName = xss(req.body.firstName);
       req.body.lastName = xss(req.body.lastName);
       req.body.username = xss(req.body.username);
       req.body.email = xss(req.body.email);
-      req.body.password = xss(req.body.password);
-
-      const { error } = validateUserRegistrationData(req.body);
-
-      if (error) {
-         res.status(400).json({ error: error.details[0].message });
-         return;
-      }
 
       await connect();
 
