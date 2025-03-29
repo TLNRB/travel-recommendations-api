@@ -4,7 +4,7 @@ import { Social } from './social'
 export interface User extends Document {
    firstName: string,
    lastName: string,
-   userName: string,
+   username: string,
    email: string,
    passwordHash: string,
    profilePicture?: string,

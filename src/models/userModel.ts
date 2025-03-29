@@ -4,9 +4,9 @@ import { User } from '../interfaces/user'
 const userSchema = new Schema<User>({
    firstName: { type: String, required: true, min: 2, max: 100 },
    lastName: { type: String, required: true, min: 2, max: 100 },
-   userName: { type: String, required: true, min: 2, max: 100, unique: true },
+   username: { type: String, required: true, min: 2, max: 100, unique: true },
    email: { type: String, required: true, min: 6, max: 255, unique: true },
-   passwordHash: { type: String, required: true, min: 6, max: 255 },
+   passwordHash: { type: String, required: true, min: 6, max: 20 },
    profilePicture: { type: String, default: "" },
    bio: { type: String, default: "", max: 255 },
    country: { type: String, default: "", max: 100 },
