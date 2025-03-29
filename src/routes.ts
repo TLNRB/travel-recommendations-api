@@ -3,6 +3,7 @@ import { Router, Request, Response } from 'express';
 // Controllers
 import { registerUser } from './controllers/authController';
 import { createPermission, getAllPermissions } from './controllers/permissionController';
+import { createRole, getAllRoles } from './controllers/roleController';
 
 const router: Router = Router();
 
@@ -14,6 +15,10 @@ router.get('/', (req: Request, res: Response) => {
 // AUTHENTICATION routes
 router.post('/user/register', registerUser);
 /* router.post('/user/login', loginUser); */
+
+// ROLE routes
+router.post('/roles', createRole);
+router.get('/roles', getAllRoles);
 
 
 // PERMISSION routes
