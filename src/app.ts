@@ -9,12 +9,13 @@ dotenvFlow.config();
 // Create Express application
 const app: Application = express();
 
-app.use('/api', routes);
-
-/**
- * 
- */
 export function startServer(): void {
+   // JSON body parser
+   app.use(express.json());
+
+   // Binding the routes to the app
+   app.use('/api', routes);
+
    // Test database connection
    testConnection();
 

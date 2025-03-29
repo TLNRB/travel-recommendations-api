@@ -14,6 +14,7 @@ import { connect, disconnect } from '../repository/database';
  * @param res 
  */
 export async function registerUser(req: Request, res: Response): Promise<void> {
+   console.log('Body: ', req.body);
    try {
       const { error } = validateUserRegistrationData(req.body);
 
@@ -84,7 +85,7 @@ export function validateUserRegistrationData(data: User): ValidationResult {
       lastName: Joi.string().min(2).max(100).required(),
       username: Joi.string().min(2).max(100).required(),
       email: Joi.string().email().min(6).max(255).required(),
-      password: Joi.string().min(6).max(255).required(),
+      password: Joi.string().min(6).max(20).required(),
    })
 
    return schema.validate(data);
