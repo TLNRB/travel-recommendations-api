@@ -169,3 +169,27 @@ export function validateUserLoginData(data: User): ValidationResult {
    return schema.validate(data);
 
 }
+
+/**
+ * Verify the token
+ * @param req 
+ * @param res 
+ * @param next 
+ */
+export function verifyToken(req: Request, res: Response, next: NextFunction): void {
+   // Check if the token is provided
+   const token: string | undefined = req.header('auth-token');
+   if (!token) {
+      res.status(400).json({ error: 'Access denied!' });
+      return;
+   }
+
+   try {
+      jwt.verify(token, process.env.TOKEN_SECRET as string);
+
+      next();
+   }
+   catch {
+      res.status(401).json({ error: 'Invalid token!' });
+   }
+}
