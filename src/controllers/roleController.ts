@@ -71,7 +71,16 @@ export async function getAllRoles(req: Request, res: Response): Promise<void> {
    try {
       await connect();
 
-      const roles = await roleModel.find({}).populate('permissions', 'name description');
+      // Decide if we want to populate the permissions or not
+      const populate: boolean = req.query.populate === 'true';
+      let roles;
+
+      if (populate) {
+         roles = await roleModel.find({}).populate('permissions', 'name description');
+      }
+      else {
+         roles = await roleModel.find({});
+      }
 
       res.status(200).json({ error: null, data: roles });
    }
