@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import xss from 'xss';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import Joi, { ValidationResult } from 'joi';
@@ -14,8 +15,14 @@ import { connect, disconnect } from '../repository/database';
  * @param res 
  */
 export async function registerUser(req: Request, res: Response): Promise<void> {
-   console.log('Body: ', req.body);
    try {
+      // Sanitize user input
+      req.body.firstName = xss(req.body.firstName);
+      req.body.lastName = xss(req.body.lastName);
+      req.body.username = xss(req.body.username);
+      req.body.email = xss(req.body.email);
+      req.body.password = xss(req.body.password);
+
       const { error } = validateUserRegistrationData(req.body);
 
       if (error) {
