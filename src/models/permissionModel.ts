@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Permission } from '../interfaces/Permission'
+import { Permission } from '../interfaces/permission';
 
 const permissionSchema = new Schema<Permission>({
    name: { type: String, required: true, min: 2, max: 100 },
