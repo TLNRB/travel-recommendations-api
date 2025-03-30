@@ -37,7 +37,17 @@ export function setupDocs(app: Application): void {
                   description: { type: 'string' },
                }
             },
-            Role: {
+            RoleUnpopulated: {
+               type: 'object',
+               properties: {
+                  name: { type: 'string' },
+                  permissions: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  }
+               }
+            },
+            RolePopulated: {
                type: 'object',
                properties: {
                   name: { type: 'string' },
@@ -47,7 +57,17 @@ export function setupDocs(app: Application): void {
                   }
                }
             },
-            User: {
+            CreateUser: {
+               type: 'object',
+               properties: {
+                  firstName: { type: 'string' },
+                  lastName: { type: 'string' },
+                  username: { type: 'string' },
+                  email: { type: 'string' },
+                  password: { type: 'string' }
+               }
+            },
+            ExistingUser: {
                type: 'object',
                properties: {
                   firstName: { type: 'string' },
