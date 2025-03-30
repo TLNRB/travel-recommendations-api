@@ -3,6 +3,7 @@ import dotenvFlow from 'dotenv-flow';
 import routes from './routes'
 import cors from 'cors';
 import { testConnection } from './repository/database';
+import { setupDocs } from './util/documentation';
 
 // Load environment variables
 dotenvFlow.config();
@@ -10,13 +11,11 @@ dotenvFlow.config();
 // Create Express application
 const app: Application = express();
 
-/**
- * Setup CORS
- */
+// Setup CORS
 function setupCors(): void {
    app.use(cors({
       origin: "*", // Allow requests from any origin
-      methods: ["GET", "POST", "PUT", "DELETE"],
+      methods: 'GET, POST, PUT, DELETE',
       allowedHeaders: ['auth-token', 'Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
       credentials: true
    }))
@@ -30,6 +29,9 @@ export function startServer(): void {
 
    // Binding the routes to the app
    app.use('/api', routes);
+
+   // Setup swagger documentation
+   setupDocs(app);
 
    // Test database connection
    testConnection();
