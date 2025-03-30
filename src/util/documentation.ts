@@ -17,7 +17,7 @@ export function setupDocs(app: Application): void {
             description: 'Local development server',
          },
          {
-            url: 'url',
+            url: 'https://travel-recommendations-api.onrender.com/api/',
             description: 'Production server',
          }
       ],
