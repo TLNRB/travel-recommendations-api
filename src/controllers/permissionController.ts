@@ -36,8 +36,7 @@ export async function createPermission(req: Request, res: Response): Promise<voi
       // Create a new permission object
       const permissionObject = new permissionModel({
          name: req.body.name,
-         description: req.body.description,
-         protected: req.body.protected
+         description: req.body.description
       });
 
       const savedPermission = await permissionObject.save();
@@ -58,8 +57,7 @@ export async function createPermission(req: Request, res: Response): Promise<voi
 export function validatePermissionData(data: Permission): ValidationResult {
    const schema = Joi.object({
       name: Joi.string().min(2).max(100).required(),
-      description: Joi.string().min(2).max(255).required(),
-      protected: Joi.boolean().required()
+      description: Joi.string().min(2).max(255).required()
    })
 
    return schema.validate(data);
