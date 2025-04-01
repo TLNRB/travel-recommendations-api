@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 
 // Controllers
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
-import { createPermission, getAllPermissions } from './controllers/permissionController';
+import { createPermission, deletePermissionById, getAllPermissions, updatePermisissionById } from './controllers/permissionController';
 import { createRole, getAllRoles } from './controllers/roleController';
 
 const router: Router = Router();
@@ -215,5 +215,43 @@ router.post('/permissions', verifyToken, createPermission);
  *                     $ref: '#/components/schemas/Permission'
  */
 router.get('/permissions', getAllPermissions);
+/**
+ * @swagger
+ * /permissions/{id}:
+ *   put:
+ *     tags:
+ *       - Permission Routes
+ *     summary: Update a specific permission
+ *     description: Takes a permission object in the body and updates a permission in the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the permission to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Permission'
+ *     responses:
+ *       201:
+ *         description: Permission updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/permissions/:id', verifyToken, updatePermisissionById);
+
 
 export default router;

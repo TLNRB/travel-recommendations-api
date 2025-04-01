@@ -82,3 +82,40 @@ export async function getAllPermissions(req: Request, res: Response): Promise<vo
       await disconnect();
    }
 }
+
+export async function updatePermisissionById(req: Request, res: Response): Promise<void> {
+   console.log('updatePermisissionById called!');
+   try {
+      // Validate user input
+      const { error } = validatePermissionData(req.body);
+
+      if (error) {
+         res.status(400).json({ error: error.details[0].message });
+         return;
+      }
+
+      // Sanitize user input
+      const id = xss(req.params.id);
+      req.body.name = xss(req.body.name);
+      req.body.description = xss(req.body.description);
+
+      await connect();
+
+      // Check if the permission exists and update it
+      const result = await permissionModel.findByIdAndUpdate(id, req.body);
+      if (!result) {
+         res.status(404).json({ error: 'Permission not found with id=' + id });
+         return;
+      }
+      else {
+         res.status(201).json({ error: null, message: 'Permission updated successfully!' });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error updating permission! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
