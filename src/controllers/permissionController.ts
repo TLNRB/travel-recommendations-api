@@ -3,6 +3,7 @@ import xss from 'xss';
 import Joi, { ValidationResult } from 'joi';
 
 import { permissionModel } from '../models/permissionModel';
+import { roleModel } from '../models/roleModel';
 import { Permission } from '../interfaces/permission';
 import { connect, disconnect } from '../repository/database';
 
@@ -83,6 +84,11 @@ export async function getAllPermissions(req: Request, res: Response): Promise<vo
    }
 }
 
+/**
+ * Update a permission by Id
+ * @param req
+ * @param res
+ */
 export async function updatePermisissionById(req: Request, res: Response): Promise<void> {
    console.log('updatePermisissionById called!');
    try {
@@ -119,3 +125,42 @@ export async function updatePermisissionById(req: Request, res: Response): Promi
    }
 }
 
+/**
+ * Delete a permission by Id
+ * @param req
+ * @param res
+ */
+export async function deletePermissionById(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize user input
+      const id = xss(req.params.id);
+
+      await connect();
+
+      // Check if the permission exists
+      const permission = await permissionModel.findById(id);
+      if (!permission) {
+         res.status(404).json({ error: 'Permission not found with id=' + id });
+         return;
+      }
+      else {
+         const rolesUsingPermission = await roleModel.find({ permissions: id });
+
+         if (rolesUsingPermission.length > 0) {
+            res.status(400).json({ error: 'Cannot delete permission. It is assigned to one or more roles.' });
+            return;
+         }
+         else {
+            // Delete the permission
+            await permissionModel.findByIdAndDelete(id);
+            res.status(201).json({ error: null, message: 'Permission deleted successfully!' });
+         }
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error deleting permission! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}

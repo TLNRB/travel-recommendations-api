@@ -252,6 +252,36 @@ router.get('/permissions', getAllPermissions);
  *                   type: string
  */
 router.put('/permissions/:id', verifyToken, updatePermisissionById);
-
+/**
+ * @swagger
+ * /permissions/{id}:
+ *   delete:
+ *     tags:
+ *       - Permission Routes
+ *     summary: Delete a specific permission
+ *     description: Deletes a permission from the database based on its Id. (Note: If a permission is assigned to a role, it cannot be deleted.)
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the permission to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: Permission deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.delete('/permissions/:id', verifyToken, deletePermissionById);
 
 export default router;
