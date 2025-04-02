@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import xss from 'xss';
 import Joi, { ValidationResult } from 'joi';
 
@@ -90,20 +91,23 @@ export async function getAllPermissions(req: Request, res: Response): Promise<vo
  * @param res
  */
 export async function updatePermisissionById(req: Request, res: Response): Promise<void> {
-   console.log('updatePermisissionById called!');
    try {
       // Validate user input
       const { error } = validatePermissionData(req.body);
-
       if (error) {
          res.status(400).json({ error: error.details[0].message });
          return;
       }
 
-      // Sanitize user input
+      // Sanitize user input and id
       const id = xss(req.params.id);
       req.body.name = xss(req.body.name);
       req.body.description = xss(req.body.description);
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid permission Id format' });
+         return;
+      }
 
       await connect();
 
@@ -114,7 +118,7 @@ export async function updatePermisissionById(req: Request, res: Response): Promi
          return;
       }
       else {
-         res.status(201).json({ error: null, message: 'Permission updated successfully!' });
+         res.status(200).json({ error: null, message: 'Permission updated successfully!' });
       }
    }
    catch (err) {
@@ -132,8 +136,12 @@ export async function updatePermisissionById(req: Request, res: Response): Promi
  */
 export async function deletePermissionById(req: Request, res: Response): Promise<void> {
    try {
-      // Sanitize user input
+      // Sanitize and validate id 
       const id = xss(req.params.id);
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid permission Id format' });
+         return;
+      }
 
       await connect();
 
@@ -144,16 +152,17 @@ export async function deletePermissionById(req: Request, res: Response): Promise
          return;
       }
       else {
-         const rolesUsingPermission = await roleModel.find({ permissions: id });
+         // Check if the permission is assigned to any role
+         const roleExists = await roleModel.exists({ permissions: id });
 
-         if (rolesUsingPermission.length > 0) {
-            res.status(400).json({ error: 'Cannot delete permission. It is assigned to one or more roles.' });
+         if (roleExists) {
+            res.status(400).json({ error: 'Cannot delete permission. It is assigned to at least one role.' });
             return;
          }
          else {
             // Delete the permission
             await permissionModel.findByIdAndDelete(id);
-            res.status(201).json({ error: null, message: 'Permission deleted successfully!' });
+            res.status(200).json({ error: null, message: 'Permission deleted successfully!' });
          }
       }
    }

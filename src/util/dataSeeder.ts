@@ -105,6 +105,22 @@ export async function seedData(): Promise<void> {
    });
    await user2.save();
 
+   const user3 = new userModel({
+      firstName: "Bartek",
+      lastName: "Fenicki",
+      username: "bartekfeni826",
+      email: "bartek.fenicki@gmail.com",
+      passwordHash: hashedPassword,
+      profilePicture: "",
+      bio: "",
+      country: "",
+      city: "",
+      socials: [],
+      role: adminRole!._id,
+      registerDate: new Date()
+   });
+   await user3.save();
+
    console.log("Data seeded successfully.");
 }
 
