@@ -3,7 +3,7 @@ import { Router, Request, Response } from 'express';
 // Controllers
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { createPermission, deletePermissionById, getAllPermissions, updatePermisissionById } from './controllers/permissionController';
-import { createRole, getAllRoles } from './controllers/roleController';
+import { createRole, deleteRoleById, getAllRoles, updateRoleById } from './controllers/roleController';
 
 const router: Router = Router();
 
@@ -158,6 +158,74 @@ router.post('/roles', verifyToken, createRole);
  *                     $ref: '#/components/schemas/RolePopulated'
  */
 router.get('/roles', getAllRoles);
+/**
+ * @swagger
+ * /roles/{id}:
+ *   put:
+ *     tags:
+ *       - Role Routes
+ *     summary: Update a specific role
+ *     description: Takes a role object in the body and updates a role in the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the role to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RoleUnpopulated'
+ *     responses:
+ *       201:
+ *         description: Role updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/roles/:id', verifyToken, updateRoleById);
+/**
+ * @swagger
+ * /roles/{id}:
+ *   delete:
+ *     tags:
+ *       - Role Routes
+ *     summary: Delete a specific role
+ *     description: Deletes a role from the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the role to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       201:
+ *         description: Role deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.delete('/roles/:id', verifyToken, deleteRoleById);
 
 
 // PERMISSION routes
@@ -259,7 +327,8 @@ router.put('/permissions/:id', verifyToken, updatePermisissionById);
  *     tags:
  *       - Permission Routes
  *     summary: Delete a specific permission
- *     description: Deletes a permission from the database based on its Id. (Note: If a permission is assigned to a role, it cannot be deleted.)
+ *     description: |
+ *       Deletes a permission from the database based on its Id. (Note: If a permission is assigned to a role, it cannot be deleted.)
  *     security:
  *       - ApiKeyAuth: []
  *     parameters:
