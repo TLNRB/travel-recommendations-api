@@ -160,13 +160,13 @@ router.post('/roles', verifyToken, createRole);
 router.get('/roles', getAllRoles);
 /**
  * @swagger
- * /roles:
+ * /roles/query:
  *   get:
  *     tags:
  *       - Role Routes
- *     summary: Get all roles
+ *     summary: Get roles by query
  *     description: |
- *       Get all roles populated with permissions if populate parameter is true, else permission ids are returned.
+ *       Get roles based on a specific field and value. Populates the permissions if populate parameter is true.
  *     parameters:
  *       - name: field
  *         in: query
