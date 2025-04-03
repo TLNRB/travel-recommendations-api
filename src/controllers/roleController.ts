@@ -96,6 +96,51 @@ export async function getAllRoles(req: Request, res: Response): Promise<void> {
 }
 
 /**
+ * Get roles by query
+ * @param req 
+ * @param res 
+ */
+export async function getRolesByQuery(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize query parameters
+      const field: string = xss(req.query.field as string);
+      const value: string = xss(req.query.value as string);
+      const populate: boolean = req.query.populate === 'true';
+
+      if (!field || !value) {
+         res.status(400).json({ error: 'Field and value are required!' });
+         return;
+      }
+
+      await connect();
+
+      let roles;
+
+      // Check if the field is id or permissions
+      if (field === '_id' || field === 'permissions') {
+         if (!mongoose.Types.ObjectId.isValid(value)) {
+            res.status(400).json({ error: 'Invalid role Id format' });
+            return;
+         }
+
+         // If populate is true, populate the permissions field
+         populate ? roles = await roleModel.find({ [field]: value }).populate('permissions', 'name description') : roles = await roleModel.find({ [field]: value });
+      }
+      else {
+         populate ? roles = await roleModel.find({ [field]: { $regex: value, $options: 'i' } }).populate('permissions', 'name description') : roles = await roleModel.find({ [field]: { $regex: value, $options: 'i' } });
+      }
+
+      res.status(200).json({ error: null, data: roles });
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error getting roles! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
  * Update a role by Id
  * @param req
  * @param res

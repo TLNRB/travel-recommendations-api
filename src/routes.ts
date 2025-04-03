@@ -3,7 +3,7 @@ import { Router, Request, Response } from 'express';
 // Controllers
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { createPermission, deletePermissionById, getAllPermissions, updatePermisissionById } from './controllers/permissionController';
-import { createRole, deleteRoleById, getAllRoles, updateRoleById } from './controllers/roleController';
+import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 
 const router: Router = Router();
 
@@ -158,6 +158,51 @@ router.post('/roles', verifyToken, createRole);
  *                     $ref: '#/components/schemas/RolePopulated'
  */
 router.get('/roles', getAllRoles);
+/**
+ * @swagger
+ * /roles:
+ *   get:
+ *     tags:
+ *       - Role Routes
+ *     summary: Get all roles
+ *     description: |
+ *       Get all roles populated with permissions if populate parameter is true, else permission ids are returned.
+ *     parameters:
+ *       - name: field
+ *         in: query
+ *         required: true
+ *         description: Field we want to query by
+ *         schema:
+ *           type: string
+ *       - name: value
+ *         in: query
+ *         required: true
+ *         description: Value of the field.
+ *         schema:
+ *           type: string
+ *       - name: populate
+ *         in: query
+ *         required: true
+ *         description: Populate the permissions in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *     responses:
+ *       200:
+ *         description: Role(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/RolePopulated'
+ */
+router.get('/roles/query', getRolesByQuery);
 /**
  * @swagger
  * /roles/{id}:
