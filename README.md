@@ -1,6 +1,6 @@
 # travel-recommendation-api
 
-MonMongoDB Express Node TypeScript REST API for travel recommendations db
+MongoDB Express Node TypeScript REST API for travel recommendations db
 
 ## Project setup
 
