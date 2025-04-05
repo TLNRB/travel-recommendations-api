@@ -5,7 +5,7 @@ import { loginUser, registerUser, verifyToken } from './controllers/authControll
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
-import { createRecommendation, getAllRecommendations, getRecommendationsByQuery } from './controllers/recommendationController';
+import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById } from './controllers/recommendationController';
 import { get } from 'http';
 
 const router: Router = Router();
@@ -379,6 +379,43 @@ router.get('/recommendations', getAllRecommendations);
  *                     $ref: '#/components/schemas/Recommendation'
  */
 router.get('/recommendations/query', getRecommendationsByQuery);
+/**
+ * @swagger
+ * /recommendations/{id}:
+ *   put:
+ *     tags:
+ *       - Recommendation Routes
+ *     summary: Update a specific recommendation
+ *     description: Takes a recommendation object in the body and updates a recommendation in the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the recommendation to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Recommendation'
+ *     responses:
+ *       200:
+ *         description: Recommendation updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/recommendations/:id', verifyToken, updateRecommendationById);
 
 // ROLE routes
 /**

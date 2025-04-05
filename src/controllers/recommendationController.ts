@@ -49,24 +49,6 @@ export async function createRecommendation(req: Request, res: Response): Promise
 }
 
 /**
- * Validate recommendation data
- * @param data 
- */
-export function validateRecommendationData(data: Recommendation): ValidationResult {
-   const schema = Joi.object({
-      _createdBy: Joi.string().required(),
-      place: Joi.string().required(),
-      title: Joi.string().min(2).max(255).required(),
-      content: Joi.string().min(2).max(500).required(),
-      dateOfVisit: Joi.date().required(),
-      rating: Joi.number().required().min(1).max(5),
-      upvotes: Joi.number().required().default(0)
-   })
-
-   return schema.validate(data)
-}
-
-/**
  * Get all recommendations
  * @param req 
  * @param res 
@@ -148,6 +130,70 @@ export async function getRecommendationsByQuery(req: Request, res: Response): Pr
 }
 
 /**
+ * Update a recommendation by Id
+ * @param req 
+ * @param res 
+ */
+export async function updateRecommendationById(req: Request, res: Response): Promise<void> {
+   try {
+      // Validate user input
+      const { error } = validateRecommendationData(req.body);
+      if (error) {
+         res.status(400).json({ error: error.details[0].message });
+         return;
+      }
+
+      // Sanitize user input and id
+      const id = xss(req.params.id);
+      req.body.title = xss(req.body.title);
+      req.body.content = xss(req.body.content);
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid recommendation Id format' });
+         return;
+      }
+
+      await connect();
+
+      const { _createdBy, place, dateOfWriting, ...safeBody } = req.body; // Exclude _createdBy and place from the body
+
+      // Check if the recommendation exists
+      const result = await recommendationModel.findByIdAndUpdate(id, safeBody);
+      if (!result) {
+         res.status(404).json({ error: 'Recommendation not found with id=' + id });
+         return;
+      }
+      else {
+         res.status(200).json({ error: null, message: 'Recommendation updated successfully!' });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error updating a recommendation! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
+ * Validate recommendation data
+ * @param data 
+ */
+function validateRecommendationData(data: Recommendation): ValidationResult {
+   const schema = Joi.object({
+      _createdBy: Joi.string().required(),
+      place: Joi.string().required(),
+      title: Joi.string().min(2).max(255).required(),
+      content: Joi.string().min(2).max(500).required(),
+      dateOfVisit: Joi.date().required(),
+      rating: Joi.number().required().min(1).max(5),
+      upvotes: Joi.number().required().default(0)
+   })
+
+   return schema.validate(data)
+}
+
+/**
  * Populate recommendations based on query parameters
  * @param query
  * @param req 
@@ -159,4 +205,3 @@ function populateRecommendations(query: any, populateCreatedBy: boolean, populat
 
    return query;
 }
-
