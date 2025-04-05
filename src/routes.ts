@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 
 // Controllers
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
-import { createPermission, deletePermissionById, getAllPermissions, updatePermisissionById } from './controllers/permissionController';
+import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 
 const router: Router = Router();
@@ -277,36 +277,6 @@ router.delete('/roles/:id', verifyToken, deleteRoleById);
 /**
  * @swagger
  * /permissions:
- *   post:
- *     tags:
- *       - Permission Routes
- *     summary: Create a new permission
- *     description: Takes a permission object in the body and creates a permission in the database.
- *     security:
- *       - ApiKeyAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Permission'
- *     responses:
- *       201:
- *         description: Permission created successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                 data:
- *                   $ref: '#/components/schemas/Permission'
- */
-router.post('/permissions', verifyToken, createPermission);
-/**
- * @swagger
- * /permissions:
  *   get:
  *     tags:
  *       - Permission Routes
@@ -330,30 +300,28 @@ router.post('/permissions', verifyToken, createPermission);
 router.get('/permissions', getAllPermissions);
 /**
  * @swagger
- * /permissions/{id}:
- *   put:
+ * /permissions/query:
+ *   get:
  *     tags:
  *       - Permission Routes
- *     summary: Update a specific permission
- *     description: Takes a permission object in the body and updates a permission in the database based on its Id.
- *     security:
- *       - ApiKeyAuth: []
+ *     summary: Get permissions by query
+ *     description: Get permissions based on a specific field and value.
  *     parameters:
- *       - name: id
- *         in: path
+ *       - name: field
+ *         in: query
  *         required: true
- *         description: Id of the permission to update.
+ *         description: Field we want to query by
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Permission'
+ *       - name: value
+ *         in: query
+ *         required: true
+ *         description: Value of the field.
+ *         schema:
+ *           type: string
  *     responses:
- *       201:
- *         description: Permission updated successfully.
+ *       200:
+ *         description: Permission(s) retrieved successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -361,41 +329,11 @@ router.get('/permissions', getAllPermissions);
  *               properties:
  *                 error:
  *                   type: string
- *                 message:
- *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Permission'
  */
-router.put('/permissions/:id', verifyToken, updatePermisissionById);
-/**
- * @swagger
- * /permissions/{id}:
- *   delete:
- *     tags:
- *       - Permission Routes
- *     summary: Delete a specific permission
- *     description: |
- *       Deletes a permission from the database based on its Id. (Note: If a permission is assigned to a role, it cannot be deleted.)
- *     security:
- *       - ApiKeyAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: Id of the permission to delete.
- *         schema:
- *           type: string
- *     responses:
- *       201:
- *         description: Permission deleted successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                 message:
- *                   type: string
- */
-router.delete('/permissions/:id', verifyToken, deletePermissionById);
+router.get('/permissions/query', getPermissionsByQuery);
 
 export default router;
