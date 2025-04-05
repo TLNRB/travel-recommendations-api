@@ -1,6 +1,7 @@
 import { permissionModel } from "../models/permissionModel";
 import { roleModel } from "../models/roleModel";
 import { userModel } from "../models/userModel";
+import { placeModel } from "src/models/placeModel";
 
 import { connect, disconnect } from "../repository/database";
 import bcrypt from "bcrypt";
@@ -72,6 +73,7 @@ export async function seedData(): Promise<void> {
    const salt = await bcrypt.genSalt(10);
    const hashedPassword = await bcrypt.hash("123456", salt);
    const adminRole = await roleModel.findOne({ name: 'admin' });
+   const userRole = await roleModel.findOne({ name: 'user' });
 
    const user1 = new userModel({
       firstName: "Norbert",
@@ -120,6 +122,95 @@ export async function seedData(): Promise<void> {
       registerDate: new Date()
    });
    await user3.save();
+
+   const user4 = new userModel({
+      firstName: "User",
+      lastName: "User",
+      username: "user",
+      email: "user@email.com",
+      passwordHash: hashedPassword,
+      profilePicture: "",
+      bio: "",
+      country: "",
+      city: "",
+      socials: [],
+      role: userRole!._id,
+      registerDate: new Date()
+   });
+   await user4.save();
+
+   // Create places
+   const place1 = new placeModel({
+      name: "Place 1",
+      description: "Description for Place 1",
+      images: ["image1.jpg", "image2.jpg"],
+      location: {
+         continent: "Europe",
+         country: "Hungary",
+         city: "Budapest",
+         street: "Andrassy ut",
+         streetNumber: "123"
+      },
+      upvotes: 16,
+      tags: ["tag1", "tag2"],
+      approved: true,
+      _createdBy: user1._id
+   });
+   await place1.save();
+
+   const place2 = new placeModel({
+      name: "Place 2",
+      description: "Description for Place 2",
+      images: ["image3.jpg", "image4.jpg"],
+      location: {
+         continent: "North America",
+         country: "USA",
+         city: "Seattle",
+         street: "Pine Street",
+         streetNumber: "22"
+      },
+      upvotes: 0,
+      tags: ["tag1", "tag2"],
+      approved: true,
+      _createdBy: user1._id
+   });
+   await place2.save();
+
+   const place3 = new placeModel({
+      name: "Place 3",
+      description: "Description for Place 3",
+      images: ["image5.jpg", "image6.jpg"],
+      location: {
+         continent: "Europe",
+         country: "England",
+         city: "London",
+         street: "Baker Street",
+         streetNumber: "1A"
+      },
+      upvotes: 5,
+      tags: ["tag1", "tag2"],
+      approved: true,
+      _createdBy: user4._id
+   });
+   await place3.save();
+
+   const place4 = new placeModel({
+      name: "Place 4",
+      description: "Description for Place 4",
+      images: ["image7.jpg", "image8.jpg"],
+      location: {
+         continent: "Asia",
+         country: "Japan",
+         city: "Tokyo",
+         street: "Shibuya",
+         streetNumber: "45"
+      },
+      upvotes: 0,
+      tags: ["tag1", "tag2"],
+      approved: false,
+      _createdBy: user4._id
+   });
+   await place4.save();
 
    console.log("Data seeded successfully.");
 }

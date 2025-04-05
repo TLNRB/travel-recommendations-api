@@ -156,6 +156,7 @@ router.get('/places', getAllPlaces);
  *       - Place Routes
  *     summary: Get places by query
  *     description: Get places based on a specific field and value.
+ *     parameters:
  *       - name: field
  *         in: query
  *         required: true
