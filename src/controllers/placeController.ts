@@ -36,11 +36,6 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
       };
       req.body.tags = req.body.tags.map((tag: string) => xss(tag));
 
-      if (!mongoose.Types.ObjectId.isValid(req.body._createdBy)) {
-         res.status(400).json({ error: 'Invalid user Id format.' });
-         return;
-      }
-
       await connect();
 
       // Check if the place already exists
@@ -66,9 +61,7 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
                street: req.body.location.street,
                streetNumber: req.body.location.streetNumber
             },
-            upvotes: 0,
             tags: req.body.tags,
-            approved: false,
             _createdBy: req.body._createdBy
          });
       }
