@@ -9,6 +9,14 @@ import { createRecommendation, getAllRecommendations, getRecommendationsByQuery,
 
 const router: Router = Router();
 
+/**
+ * TODO: getAll, getByQuery, and update on user
+ * TODO: place delete, recommendation delete as well
+ * TODO: cityImages
+ * TODO: countryImages
+ * TODO: collections
+ */
+
 // Welcome route
 /**
  * @swagger
