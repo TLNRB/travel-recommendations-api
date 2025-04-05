@@ -119,7 +119,7 @@ export async function getRolesByQuery(req: Request, res: Response): Promise<void
       // Check if the field is id or permissions
       if (field === '_id' || field === 'permissions') {
          if (!mongoose.Types.ObjectId.isValid(value)) {
-            res.status(400).json({ error: 'Invalid role Id format' });
+            res.status(400).json({ error: 'Invalid Id format!' });
             return;
          }
 
@@ -133,7 +133,7 @@ export async function getRolesByQuery(req: Request, res: Response): Promise<void
       res.status(200).json({ error: null, data: roles });
    }
    catch (err) {
-      res.status(500).json({ error: 'Error getting roles! Error: ' + err });
+      res.status(500).json({ error: 'Error getting roles by query! Error: ' + err });
    }
    finally {
       await disconnect();

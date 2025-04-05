@@ -126,3 +126,70 @@ export function validatePlaceData(data: Place): ValidationResult {
 
    return schema.validate(data)
 }
+
+/**
+ * Get all places
+ * @param req 
+ * @param res 
+ */
+export async function getAllPlaces(req: Request, res: Response): Promise<void> {
+   try {
+      await connect();
+
+      const places = await placeModel.find({});
+
+      res.status(200).json({ error: null, data: places });
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error getting all places! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
+ * Get places by query
+ * @param req 
+ * @param res 
+ */
+export async function getPlacesByQuery(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize query parameters
+      const field: string = xss(req.query.field as string);
+      const value: string = xss(req.query.value as string);
+
+      if (!field || !value) {
+         res.status(400).json({ error: 'Field and value are required!' });
+         return;
+      }
+
+      await connect();
+
+      let places;
+
+      // Check if the field is id
+      if (field === '_id' || field === '_createdBy') {
+         if (!mongoose.Types.ObjectId.isValid(value)) {
+            res.status(400).json({ error: 'Invalid Id format!' });
+            return;
+         }
+
+         places = await placeModel.findById({ [field]: value });
+      }
+      // Else if needed as a numebr or boolean can't be checked with regex and options
+      else if (field === 'approved' || field === 'upvotes') {
+         places = await placeModel.find({ [field]: value });
+      }
+      else {
+         places = await placeModel.find({ [field]: { $regex: value, $options: 'i' } });
+      }
+      res.status(200).json({ error: null, data: places });
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error getting places! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}

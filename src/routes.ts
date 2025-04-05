@@ -4,7 +4,7 @@ import { Router, Request, Response } from 'express';
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
-import { createPlace } from './controllers/placeController';
+import { createPlace, getAllPlaces, getPlacesByQuery } from './controllers/placeController';
 
 const router: Router = Router();
 
@@ -124,6 +124,66 @@ router.post('/user/login', loginUser);
  *                   $ref: '#/components/schemas/Place'
  */
 router.post('/places', verifyToken, createPlace);
+/**
+ * @swagger
+ * /places:
+ *   get:
+ *     tags:
+ *       - Place Routes
+ *     summary: Get all places
+ *     description: Get all places as JSON obejects in an array.
+ *     responses:
+ *       200:
+ *         description: Place(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Place'
+ */
+router.get('/places', getAllPlaces);
+/**
+ * @swagger
+ * /places/query:
+ *   get:
+ *     tags:
+ *       - Place Routes
+ *     summary: Get places by query
+ *     description: Get places based on a specific field and value.
+ *       - name: field
+ *         in: query
+ *         required: true
+ *         description: Field we want to query by
+ *         schema:
+ *           type: string
+ *       - name: value
+ *         in: query
+ *         required: true
+ *         description: Value of the field.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Place(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Place'
+ */
+router.get('/places/query', getPlacesByQuery);
 
 // ROLE routes
 /**
