@@ -5,8 +5,7 @@ import { loginUser, registerUser, verifyToken } from './controllers/authControll
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
-import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById } from './controllers/recommendationController';
-import { get } from 'http';
+import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
 
 const router: Router = Router();
 
@@ -416,6 +415,37 @@ router.get('/recommendations/query', getRecommendationsByQuery);
  *                   type: string
  */
 router.put('/recommendations/:id', verifyToken, updateRecommendationById);
+/**
+ * @swagger
+ * /recommendations/{id}:
+ *   delete:
+ *     tags:
+ *       - Recommendation Routes
+ *     summary: Delete a specific recommendation
+ *     description: Deletes a recommendation from the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the recommendation to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Recommendation deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.delete('/recommendations/:id', verifyToken, deleteRecommendationById);
 
 // ROLE routes
 /**

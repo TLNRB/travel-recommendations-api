@@ -176,6 +176,40 @@ export async function updateRecommendationById(req: Request, res: Response): Pro
 }
 
 /**
+ * Delete a recommendation by Id
+ * @param req 
+ * @param res 
+ */
+export async function deleteRecommendationById(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize and validate id
+      const id = xss(req.params.id);
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid recommendation Id format' });
+         return;
+      }
+
+      await connect();
+
+      // Check if the recommendation exists
+      const recommendation = await recommendationModel.findByIdAndDelete(id);
+      if (!recommendation) {
+         res.status(404).json({ error: 'Recommendation not found with id=' + id });
+         return;
+      }
+      else {
+         res.status(200).json({ error: null, message: 'Recommendation deleted successfully!' });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error deleting recommendation! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
  * Validate recommendation data
  * @param data 
  */
