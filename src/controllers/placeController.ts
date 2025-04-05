@@ -250,3 +250,39 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
       await disconnect();
    }
 }
+
+/**
+ * Delete a place by id
+ * @param req 
+ * @param res 
+ */
+export async function deletePlaceById(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize and validate id
+      const id = xss(req.params.id);
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid place Id format' });
+         return;
+      }
+
+      await connect();
+
+      // Check if the place exists
+      const place = await placeModel.findById(id);
+      if (!place) {
+         res.status(404).json({ error: 'Place not found with id=' + id });
+         return;
+      }
+      else {
+         // Delete the place
+         await placeModel.findByIdAndDelete(id);
+         res.status(200).json({ error: null, message: 'Place deleted successfully!' });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error deleting place! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}

@@ -4,7 +4,7 @@ import { Router, Request, Response } from 'express';
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
-import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById } from './controllers/placeController';
+import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
 
 const router: Router = Router();
 
@@ -221,6 +221,37 @@ router.get('/places/query', getPlacesByQuery);
  *                   type: string
  */
 router.put('/places/:id', verifyToken, updatePlaceById);
+/**
+ * @swagger
+ * /places/{id}:
+ *   delete:
+ *     tags:
+ *       - Place Routes
+ *     summary: Delete a specific place
+ *     description: Deletes a place from the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the place to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Place deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.delete('/places/:id', verifyToken, deletePlaceById);
 
 // ROLE routes
 /**
