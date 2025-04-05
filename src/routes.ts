@@ -4,7 +4,7 @@ import { Router, Request, Response } from 'express';
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
-import { createPlace, getAllPlaces, getPlacesByQuery } from './controllers/placeController';
+import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById } from './controllers/placeController';
 
 const router: Router = Router();
 
@@ -184,6 +184,43 @@ router.get('/places', getAllPlaces);
  *                     $ref: '#/components/schemas/Place'
  */
 router.get('/places/query', getPlacesByQuery);
+/**
+ * @swagger
+ * /places/{id}:
+ *   put:
+ *     tags:
+ *       - Place Routes
+ *     summary: Update a specific place
+ *     description: Takes a place object in the body and updates a place in the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the place to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Place'
+ *     responses:
+ *       200:
+ *         description: Place updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/places/:id', verifyToken, updatePlaceById);
 
 // ROLE routes
 /**
@@ -320,7 +357,7 @@ router.get('/roles/query', getRolesByQuery);
  *           schema:
  *             $ref: '#/components/schemas/RoleUnpopulated'
  *     responses:
- *       201:
+ *       200:
  *         description: Role updated successfully.
  *         content:
  *           application/json:
@@ -351,7 +388,7 @@ router.put('/roles/:id', verifyToken, updateRoleById);
  *         schema:
  *           type: string
  *     responses:
- *       201:
+ *       200:
  *         description: Role deleted successfully.
  *         content:
  *           application/json:
