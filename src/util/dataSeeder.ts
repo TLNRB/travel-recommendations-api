@@ -34,6 +34,7 @@ export async function deleteAllData(): Promise<void> {
    await permissionModel.deleteMany({});
    await roleModel.deleteMany({});
    await userModel.deleteMany({});
+   await placeModel.deleteMany({});
 
    console.log("All data deleted successfully.");
 }
@@ -169,7 +170,7 @@ export async function seedData(): Promise<void> {
          upvotes: 0,
          tags: ["tag1", "tag2"],
          approved: true,
-         _createdBy: user1._id
+         _createdBy: user2._id
       },
       {
          name: "Place 3",
@@ -185,7 +186,7 @@ export async function seedData(): Promise<void> {
          upvotes: 5,
          tags: ["tag1", "tag2"],
          approved: true,
-         _createdBy: user4._id
+         _createdBy: user3._id
       },
       {
          name: "Place 4",

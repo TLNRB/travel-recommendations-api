@@ -121,7 +121,20 @@ export function setupDocs(app: Application): void {
                   approved: { type: 'boolean' },
                   _createdBy: { type: 'string' }
                }
-            }
+            },
+            Recommendation: {
+               type: 'object',
+               properties: {
+                  _createdBy: { type: 'string' },
+                  place: { type: 'string' },
+                  title: { type: 'string' },
+                  content: { type: 'string' },
+                  dateOfVisit: { type: 'string' },
+                  dateOfWriting: { type: 'string' },
+                  rating: { type: 'number' },
+                  upvotes: { type: 'number' }
+               }
+            },
          }
       }
    };

@@ -5,6 +5,8 @@ import { loginUser, registerUser, verifyToken } from './controllers/authControll
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
+import { createRecommendation, getAllRecommendations } from './controllers/recommendationController';
+import { get } from 'http';
 
 const router: Router = Router();
 
@@ -253,6 +255,78 @@ router.put('/places/:id', verifyToken, updatePlaceById);
  *                   type: string
  */
 router.delete('/places/:id', verifyToken, deletePlaceById);
+
+// RECOMMENDATION routes
+/**
+ * @swagger
+ * /recommendations:
+ *   post:
+ *     tags:
+ *       - Recommendation Routes
+ *     summary: Create a new recommendation
+ *     description: Takes a recommendation object in the body and creates a recommendation for a place in the database.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Recommendation'
+ *     responses:
+ *       201:
+ *         description: Recommendation created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Recommendation'
+ */
+router.post('/recommendations', verifyToken, createRecommendation);
+/**
+ * @swagger
+ * /recommendations:
+ *   get:
+ *     tags:
+ *       - Recommendation Routes
+ *     summary: Get all recommendations
+ *     description: |
+ *       Get all recommendations populated with user or place or both if corresponding populate parameter is true, else ids are returned.
+ *     parameters:
+ *       - name: populateCreatedBy
+ *         in: query
+ *         required: true
+ *         description: Populate the user in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: populatePlace
+ *         in: query
+ *         required: true
+ *         description: Populate the place in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *     responses:
+ *       200:
+ *         description: Recommendation(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Recommendation'
+ */
+router.get('/recommendations', getAllRecommendations);
 
 // ROLE routes
 /**
