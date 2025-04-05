@@ -53,19 +53,6 @@ export async function createRole(req: Request, res: Response): Promise<void> {
 }
 
 /**
- * Validate role data (name and permissions)
- * @param data 
- */
-export function validateRoleData(data: Role): ValidationResult {
-   const schema = Joi.object({
-      name: Joi.string().min(2).max(100).required(),
-      permissions: Joi.array().items(Joi.string()).required()
-   })
-
-   return schema.validate(data)
-}
-
-/**
  * Get all roles
  * @param req 
  * @param res 
@@ -227,4 +214,17 @@ export async function deleteRoleById(req: Request, res: Response): Promise<void>
    finally {
       await disconnect();
    }
+}
+
+/**
+ * Validate role data (name and permissions)
+ * @param data 
+ */
+function validateRoleData(data: Role): ValidationResult {
+   const schema = Joi.object({
+      name: Joi.string().min(2).max(100).required(),
+      permissions: Joi.array().items(Joi.string()).required()
+   })
+
+   return schema.validate(data)
 }

@@ -96,31 +96,6 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
 }
 
 /**
- * Validate place data
- * @param data 
- */
-export function validatePlaceData(data: Place): ValidationResult {
-   const schema = Joi.object({
-      name: Joi.string().min(2).max(255).required(),
-      description: Joi.string().min(2).max(500).required(),
-      images: Joi.array().items(Joi.string()).required(),
-      location: Joi.object({
-         continent: Joi.string().min(2).max(100).required(),
-         country: Joi.string().min(2).max(100).required(),
-         city: Joi.string().min(2).max(100).required(),
-         street: Joi.string().min(2).max(100).required(),
-         streetNumber: Joi.string().min(1).max(10).required()
-      }).required(),
-      upvotes: Joi.number().required().default(0),
-      tags: Joi.array().items(Joi.string()).required(),
-      approved: Joi.boolean().required().default(false),
-      _createdBy: Joi.string().required()
-   })
-
-   return schema.validate(data)
-}
-
-/**
  * Get all places
  * @param req 
  * @param res 
@@ -223,7 +198,6 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
 
       await connect();
 
-
       const { _createdBy, ...safeBody } = req.body; // Exclude _createdBy from the update object
 
       // Check if the place exists
@@ -261,14 +235,12 @@ export async function deletePlaceById(req: Request, res: Response): Promise<void
       await connect();
 
       // Check if the place exists
-      const place = await placeModel.findById(id);
+      const place = await placeModel.findByIdAndDelete(id);
       if (!place) {
          res.status(404).json({ error: 'Place not found with id=' + id });
          return;
       }
       else {
-         // Delete the place
-         await placeModel.findByIdAndDelete(id);
          res.status(200).json({ error: null, message: 'Place deleted successfully!' });
       }
    }
@@ -278,4 +250,29 @@ export async function deletePlaceById(req: Request, res: Response): Promise<void
    finally {
       await disconnect();
    }
+}
+
+/**
+ * Validate place data
+ * @param data 
+ */
+function validatePlaceData(data: Place): ValidationResult {
+   const schema = Joi.object({
+      name: Joi.string().min(2).max(255).required(),
+      description: Joi.string().min(2).max(500).required(),
+      images: Joi.array().items(Joi.string()).required(),
+      location: Joi.object({
+         continent: Joi.string().min(2).max(100).required(),
+         country: Joi.string().min(2).max(100).required(),
+         city: Joi.string().min(2).max(100).required(),
+         street: Joi.string().min(2).max(100).required(),
+         streetNumber: Joi.string().min(1).max(10).required()
+      }).required(),
+      upvotes: Joi.number().required().default(0),
+      tags: Joi.array().items(Joi.string()).required(),
+      approved: Joi.boolean().required().default(false),
+      _createdBy: Joi.string().required()
+   })
+
+   return schema.validate(data)
 }
