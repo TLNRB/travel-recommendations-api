@@ -5,7 +5,7 @@ import { loginUser, registerUser, verifyToken } from './controllers/authControll
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
-import { createRecommendation, getAllRecommendations } from './controllers/recommendationController';
+import { createRecommendation, getAllRecommendations, getRecommendationsByQuery } from './controllers/recommendationController';
 import { get } from 'http';
 
 const router: Router = Router();
@@ -295,7 +295,7 @@ router.post('/recommendations', verifyToken, createRecommendation);
  *       - Recommendation Routes
  *     summary: Get all recommendations
  *     description: |
- *       Get all recommendations populated with user or place or both if corresponding populate parameter is true, else ids are returned.
+ *       Get all recommendations populated with user or place or both if corresponding populate parameters are true, else ids are returned.
  *     parameters:
  *       - name: populateCreatedBy
  *         in: query
@@ -327,6 +327,58 @@ router.post('/recommendations', verifyToken, createRecommendation);
  *                     $ref: '#/components/schemas/Recommendation'
  */
 router.get('/recommendations', getAllRecommendations);
+/**
+ * @swagger
+ * /recommendations/query:
+ *   get:
+ *     tags:
+ *       - Recommendation Routes
+ *     summary: Get recommendations by query
+ *     description: |
+ *       Get recommendations based on a specific field and value. Populates the user or place or both if corresponding populate parameters are true, else ids are returned
+ *     parameters:
+ *       - name: field
+ *         in: query
+ *         required: true
+ *         description: Field we want to query by
+ *         schema:
+ *           type: string
+ *       - name: value
+ *         in: query
+ *         required: true
+ *         description: Value of the field.
+ *         schema:
+ *           type: string
+ *       - name: populateCreatedBy
+ *         in: query
+ *         required: true
+ *         description: Populate the user in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: populatePlace
+ *         in: query
+ *         required: true
+ *         description: Populate the place in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *     responses:
+ *       200:
+ *         description: Recommendation(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Recommendation'
+ */
+router.get('/recommendations/query', getRecommendationsByQuery);
 
 // ROLE routes
 /**

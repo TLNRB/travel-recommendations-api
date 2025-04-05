@@ -78,20 +78,10 @@ export async function getAllRecommendations(req: Request, res: Response): Promis
       // Decide if we want to populate the createdBy or place or both or none
       const populateCreatedBy: boolean = req.query.populateCreatedBy === 'true';
       const populatePlace: boolean = req.query.populatePlace === 'true';
-      let recommendations;
 
-      if (populateCreatedBy && populatePlace) {
-         recommendations = await recommendationModel.find({}).populate('_createdBy').populate('place');
-      }
-      else if (populateCreatedBy) {
-         recommendations = await recommendationModel.find({}).populate('_createdBy');
-      }
-      else if (populatePlace) {
-         recommendations = await recommendationModel.find({}).populate('place');
-      }
-      else {
-         recommendations = await recommendationModel.find({});
-      }
+      let query = recommendationModel.find({});
+      query = populateRecommendations(query, populateCreatedBy, populatePlace);
+      const recommendations = await query;
 
       res.status(200).json({ error: null, data: recommendations });
    }
@@ -102,3 +92,71 @@ export async function getAllRecommendations(req: Request, res: Response): Promis
       await disconnect();
    }
 }
+
+/**
+ * Get recommendations by query
+ * @param req 
+ * @param res 
+ */
+export async function getRecommendationsByQuery(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize query parameters
+      const field: string = xss(req.query.field as string);
+      const value: string = xss(req.query.value as string);
+      const populateCreatedBy: boolean = req.query.populateCreatedBy === 'true';
+      const populatePlace: boolean = req.query.populatePlace === 'true';
+
+      if (!field || !value) {
+         res.status(400).json({ error: 'Field and value are required!' });
+         return;
+      }
+
+      await connect();
+
+      let recommendations;
+
+      // Check if the field is _createdBy or place or _id
+      if (field === '_id' || field === '_createdBy' || field === 'place') {
+         if (!mongoose.Types.ObjectId.isValid(value)) {
+            res.status(400).json({ error: 'Invalid Id format!' });
+            return;
+         }
+
+         let query = recommendationModel.find({ [field]: value });
+         query = populateRecommendations(query, populateCreatedBy, populatePlace);
+         recommendations = await query;
+      }
+      else if (field === 'title' || field === 'content') {
+         let query = recommendationModel.find({ [field]: { $regex: value, $options: 'i' } });
+         query = populateRecommendations(query, populateCreatedBy, populatePlace);
+         recommendations = await query;
+      }
+      else {
+         let query = recommendationModel.find({ [field]: value });
+         query = populateRecommendations(query, populateCreatedBy, populatePlace);
+         recommendations = await query;
+      }
+
+      res.status(200).json({ error: null, data: recommendations });
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error getting recommendations by query! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
+ * Populate recommendations based on query parameters
+ * @param query
+ * @param req 
+ * @param res 
+ */
+function populateRecommendations(query: any, populateCreatedBy: boolean, populatePlace: boolean) {
+   if (populateCreatedBy) query = query.populate('_createdBy');
+   if (populatePlace) query = query.populate('place');
+
+   return query;
+}
+
