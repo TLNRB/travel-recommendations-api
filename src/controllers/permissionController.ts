@@ -1,24 +1,9 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import xss from 'xss';
-import Joi, { ValidationResult } from 'joi';
 
 import { permissionModel } from '../models/permissionModel';
-import { Permission } from '../interfaces/permission';
 import { connect, disconnect } from '../repository/database';
-
-/**
- * Validate permission data (name and description)
- * @param data 
- */
-export function validatePermissionData(data: Permission): ValidationResult {
-   const schema = Joi.object({
-      name: Joi.string().min(2).max(100).required(),
-      description: Joi.string().min(2).max(255).required()
-   })
-
-   return schema.validate(data);
-}
 
 /**
  * Get all permissions
