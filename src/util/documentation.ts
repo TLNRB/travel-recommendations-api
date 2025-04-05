@@ -93,6 +93,34 @@ export function setupDocs(app: Application): void {
                   role: { $ref: '#/components/schemas/Role' },
                   registerDate: { type: 'string' }
                }
+            },
+            Place: {
+               type: 'object',
+               properties: {
+                  name: { type: 'string' },
+                  description: { type: 'string' },
+                  images: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  },
+                  location: {
+                     type: 'object',
+                     properties: {
+                        continent: { type: 'string' },
+                        country: { type: 'string' },
+                        city: { type: 'string' },
+                        street: { type: 'string' },
+                        streetNumber: { type: 'string' }
+                     }
+                  },
+                  upvotes: { type: 'number' },
+                  tags: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  },
+                  approved: { type: 'boolean' },
+                  _createdBy: { type: 'string' }
+               }
             }
          }
       }

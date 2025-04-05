@@ -4,6 +4,7 @@ import { Router, Request, Response } from 'express';
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
+import { createPlace } from './controllers/placeController';
 
 const router: Router = Router();
 
@@ -91,6 +92,38 @@ router.post('/user/register', registerUser);
  *                       type: string
  */
 router.post('/user/login', loginUser);
+
+// PLACE routes
+/**
+ * @swagger
+ * /places:
+ *   post:
+ *     tags:
+ *       - Place Routes
+ *     summary: Create a new place
+ *     description: Takes a place object in the body and creates a place in the database.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Place'
+ *     responses:
+ *       201:
+ *         description: Place created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Place'
+ */
+router.post('/places', verifyToken, createPlace);
 
 // ROLE routes
 /**
