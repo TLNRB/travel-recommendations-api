@@ -6,7 +6,7 @@ import { getAllPermissions, getPermissionsByQuery } from './controllers/permissi
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
 import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
-import { createCollection } from './controllers/collectionController';
+import { createCollection, getAllCollections } from './controllers/collectionController';
 
 const router: Router = Router();
 
@@ -16,6 +16,7 @@ const router: Router = Router();
  * TODO: cityImages
  * TODO: countryImages
  * TODO: collections
+ * TODO: populate, limit the data we return to only the necessary fields
  */
 
 // Welcome route
@@ -731,5 +732,45 @@ router.get('/permissions/query', getPermissionsByQuery);
  *                   $ref: '#/components/schemas/Collection'
  */
 router.post('/collections', verifyToken, createCollection);
+/**
+ * @swagger
+ * /collections:
+ *   get:
+ *     tags:
+ *       - Collection Routes
+ *     summary: Get all collections
+ *     description: |
+ *       Get all collections populated with user or place or both if corresponding populate parameters are true, else ids are returned.
+ *     parameters:
+ *       - name: populateCreatedBy
+ *         in: query
+ *         required: true
+ *         description: Populate the user in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: populatePlace
+ *         in: query
+ *         required: true
+ *         description: Populate the place in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *     responses:
+ *       200:
+ *         description: collection(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/collection'
+ */
+router.get('/collections', getAllCollections);
 
 export default router;

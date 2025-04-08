@@ -55,6 +55,33 @@ export async function createCollection(req: Request, res: Response): Promise<voi
 }
 
 /**
+ * Get all collections
+ * @param req 
+ * @param res 
+ */
+export async function getAllCollections(req: Request, res: Response): Promise<void> {
+   try {
+      await connect();
+
+      // Decide if we want to populate the places and/or users or not
+      const populateCreatedBy: boolean = req.query.populateCreatedBy === 'true';
+      const populatePlace: boolean = req.query.populatePlace === 'true';
+
+      let query = collectionModel.find({});
+      query = populateCollections(query, populateCreatedBy, populatePlace);
+      const collections = await query;
+
+      res.status(200).json({ error: null, data: collections });
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error getting all collections! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
  * Validate collection data
  * @param req 
  * @param res 
@@ -63,9 +90,21 @@ function validateCollectionData(data: any): ValidationResult {
    const schema = Joi.object({
       _createdBy: Joi.string().required(),
       name: Joi.string().min(2).max(100).required(),
-      places: Joi.array().items(Joi.string()).optional(),
-      visible: Joi.boolean().required()
+      places: Joi.array().items(Joi.string()).optional().default([]),
+      visible: Joi.boolean().required().default(false)
    });
 
    return schema.validate(data);
+}
+
+/**
+ * Populate collections based on query parameters
+ * @param req 
+ * @param res 
+ */
+function populateCollections(query: any, populateCreatedBy: boolean, populatePlaces: boolean) {
+   if (populateCreatedBy) query = query.populate('_createdBy');
+   if (populatePlaces) query = query.populate('places', 'name');
+
+   return query;
 }
