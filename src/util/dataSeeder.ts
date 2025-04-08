@@ -3,6 +3,7 @@ import { roleModel } from "../models/roleModel";
 import { userModel } from "../models/userModel";
 import { placeModel } from "../models/placeModel";
 import { recommendationModel } from "../models/recommendationModel";
+import { collectionModel } from "../models/collectionModel";
 
 import { connect, disconnect } from "../repository/database";
 import bcrypt from "bcrypt";
@@ -37,6 +38,7 @@ export async function deleteAllData(): Promise<void> {
    await userModel.deleteMany({});
    await placeModel.deleteMany({});
    await recommendationModel.deleteMany({});
+   await collectionModel.deleteMany({});
 
    console.log("All data deleted successfully.");
 }
@@ -255,6 +257,23 @@ export async function seedData(): Promise<void> {
       upvotes: 0
    }];
    await recommendationModel.insertMany(recommendations);
+
+   // Create collecrions
+   const collections = [
+      {
+         name: "Collection 1",
+         places: [place1._id, place2._id],
+         _createdBy: user1._id,
+         visible: true
+      },
+      {
+         name: "Collection 2",
+         places: [place3._id],
+         _createdBy: user1._id,
+         visible: false
+      }
+   ]
+   await collectionModel.insertMany(collections);
 
    console.log("Data seeded successfully.");
 }
