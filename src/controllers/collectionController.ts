@@ -82,6 +82,41 @@ export async function getAllCollections(req: Request, res: Response): Promise<vo
 }
 
 /**
+ * Delete a collection by Id
+ * @param req 
+ * @param res 
+ 
+ */
+export async function deleteCollectionById(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize and validate id
+      const id = xss(req.params.id);
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid collection Id format!' });
+         return;
+      }
+
+      await connect();
+
+      // Check if the collection exists
+      const collection = await collectionModel.findByIdAndDelete(id);
+      if (!collection) {
+         res.status(404).json({ error: 'Collection not found with id=' + id });
+         return;
+      }
+      else {
+         res.status(200).json({ error: null, message: 'Collection deleted successfully!' });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error deleting collection! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
  * Validate collection data
  * @param req 
  * @param res 
