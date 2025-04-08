@@ -155,7 +155,7 @@ export async function updateRecommendationById(req: Request, res: Response): Pro
 
       await connect();
 
-      const { _createdBy, place, dateOfWriting, ...safeBody } = req.body; // Exclude _createdBy and place from the body
+      const { _createdBy, place, dateOfWriting, ...safeBody } = req.body; // Exclude _createdBy, place, dateOfWriting from the body
 
       // Check if the recommendation exists
       const result = await recommendationModel.findByIdAndUpdate(id, safeBody);

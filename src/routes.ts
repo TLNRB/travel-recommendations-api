@@ -6,7 +6,7 @@ import { getAllPermissions, getPermissionsByQuery } from './controllers/permissi
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
 import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
-import { createCollection, deleteCollectionById, getAllCollections } from './controllers/collectionController';
+import { createCollection, deleteCollectionById, getAllCollections, updateCollectionById } from './controllers/collectionController';
 
 const router: Router = Router();
 
@@ -17,6 +17,7 @@ const router: Router = Router();
  * TODO: countryImages
  * TODO: collections
  * TODO: populate, limit the data we return to only the necessary fields
+ * TODO: update function should check name existance same way as create does if create does have it
  */
 
 // Welcome route
@@ -772,6 +773,43 @@ router.post('/collections', verifyToken, createCollection);
  *                     $ref: '#/components/schemas/collection'
  */
 router.get('/collections', getAllCollections);
+/**
+ * @swagger
+ * /collections/{id}:
+ *   put:
+ *     tags:
+ *       - Collection Routes
+ *     summary: Update a specific collection
+ *     description: Takes a collection object in the body and updates a collection in the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the collection to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Collection'
+ *     responses:
+ *       200:
+ *         description: Collection updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/collections/:id', verifyToken, updateCollectionById);
 /**
  * @swagger
  * /collections/{id}:

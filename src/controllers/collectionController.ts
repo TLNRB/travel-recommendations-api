@@ -26,13 +26,6 @@ export async function createCollection(req: Request, res: Response): Promise<voi
 
       await connect();
 
-      // Check if the collection already exists
-      const existingCollection = await collectionModel.findOne({ name: req.body.name });
-      if (existingCollection) {
-         res.status(400).json({ error: 'Collection with this name already exists!' });
-         return;
-      }
-
       // Create a new collection object
       const collectionObject = new collectionModel({
          _createdBy: req.body._createdBy,
@@ -51,7 +44,6 @@ export async function createCollection(req: Request, res: Response): Promise<voi
    finally {
       await disconnect();
    }
-
 }
 
 /**
@@ -75,6 +67,51 @@ export async function getAllCollections(req: Request, res: Response): Promise<vo
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all collections! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
+ * Update a collection by Id
+ * @param req 
+ * @param res 
+ */
+export async function updateCollectionById(req: Request, res: Response): Promise<void> {
+   try {
+      // Validate user input
+      const { error } = validateCollectionData(req.body);
+      if (error) {
+         res.status(400).json({ error: error.details[0].message });
+         return;
+      }
+
+      // Sanitize user input and id
+      const id = xss(req.params.id);
+      req.body.name = xss(req.body.name);
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid collection Id format!' });
+         return;
+      }
+
+      await connect();
+
+      const { _createdBy, ...safeBody } = req.body; // Extract _createdBy from the body
+
+      // Check if the collection exists
+      const result = await collectionModel.findByIdAndUpdate(id, safeBody);
+      if (!result) {
+         res.status(404).json({ error: 'Collection not found with id=' + id });
+         return;
+      }
+      else {
+         res.status(200).json({ error: null, message: 'Collection updated successfully!' });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error updating a collection! Error: ' + err });
    }
    finally {
       await disconnect();
