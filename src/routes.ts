@@ -12,10 +12,8 @@ const router: Router = Router();
 
 /**
  * TODO: getAll, getByQuery, and update on user
- * TODO: place delete, recommendation delete as well
  * TODO: cityImages
  * TODO: countryImages
- * TODO: collections
  * TODO: populate, limit the data we return to only the necessary fields
  * TODO: update function should check name existance same way as create does if create does have it
  */

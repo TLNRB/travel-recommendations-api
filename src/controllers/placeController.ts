@@ -5,6 +5,7 @@ import Joi, { ValidationResult } from 'joi';
 
 import { placeModel } from '../models/placeModel';
 import { userModel } from '../models/userModel';
+import { recommendationModel } from '../models/recommendationModel';
 import { Place } from '../interfaces/place';
 import { connect, disconnect } from '../repository/database';
 
@@ -235,12 +236,20 @@ export async function deletePlaceById(req: Request, res: Response): Promise<void
       await connect();
 
       // Check if the place exists
-      const place = await placeModel.findByIdAndDelete(id);
+      const place = await placeModel.findById(id);
       if (!place) {
          res.status(404).json({ error: 'Place not found with id=' + id });
          return;
       }
       else {
+         // Check if the place has any recommendations
+         const recommendations = await recommendationModel.find({ place: id });
+         if (recommendations.length > 0) {
+            await recommendationModel.deleteMany({ place: id });
+         }
+
+         // Delete the place
+         await placeModel.findByIdAndDelete(id);
          res.status(200).json({ error: null, message: 'Place deleted successfully!' });
       }
    }
