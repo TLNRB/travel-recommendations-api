@@ -6,6 +6,7 @@ import { getAllPermissions, getPermissionsByQuery } from './controllers/permissi
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
 import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
+import { createCollection } from './controllers/collectionController';
 
 const router: Router = Router();
 
@@ -698,5 +699,37 @@ router.get('/permissions', getAllPermissions);
  *                     $ref: '#/components/schemas/Permission'
  */
 router.get('/permissions/query', getPermissionsByQuery);
+
+// COLLECTION routes
+/**
+ * @swagger
+ * /collections:
+ *   post:
+ *     tags:
+ *       - Collection Routes
+ *     summary: Create a new collection
+ *     description: Takes a collection object in the body and creates a collection in the database.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Collection'
+ *     responses:
+ *       201:
+ *         description: Collection created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Collection'
+ */
+router.post('/collections', verifyToken, createCollection);
 
 export default router;

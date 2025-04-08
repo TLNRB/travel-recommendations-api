@@ -135,6 +135,18 @@ export function setupDocs(app: Application): void {
                   upvotes: { type: 'number' }
                }
             },
+            Collection: {
+               type: 'object',
+               properties: {
+                  _createdBy: { type: 'string' },
+                  name: { type: 'string' },
+                  places: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  },
+                  visible: { type: 'boolean' }
+               }
+            },
          }
       }
    };
