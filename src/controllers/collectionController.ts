@@ -74,6 +74,60 @@ export async function getAllCollections(req: Request, res: Response): Promise<vo
 }
 
 /**
+ * Get a collection by query
+ * @param req
+ * @param res
+ */
+export async function getCollectionsByQuery(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize query parameters
+      const field: string = xss(req.query.field as string);
+      const value: string = xss(req.query.value as string);
+      const populateCreatedBy: boolean = req.query.populateCreatedBy === 'true';
+      const populatePlace: boolean = req.query.populatePlace === 'true';
+
+      if (!field || !value) {
+         res.status(400).json({ error: 'Field and value are required!' });
+         return;
+      }
+
+      await connect();
+
+      let collections;
+
+      // Check if the field is _createdBy or place or _id
+      if (field === '_id' || field === '_createdBy' || field === 'place') {
+         if (!mongoose.Types.ObjectId.isValid(value)) {
+            res.status(400).json({ error: 'Invalid Id format!' });
+            return;
+         }
+
+         let query = collectionModel.find({ [field]: value });
+         query = populateCollections(query, populateCreatedBy, populatePlace);
+         collections = await query;
+      }
+      else if (field === 'name') {
+         let query = collectionModel.find({ [field]: { $regex: value, $options: 'i' } });
+         query = populateCollections(query, populateCreatedBy, populatePlace);
+         collections = await query;
+      }
+      else {
+         let query = collectionModel.find({ [field]: value });
+         query = populateCollections(query, populateCreatedBy, populatePlace);
+         collections = await query;
+      }
+
+      res.status(200).json({ error: null, data: collections });
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error getting collection by query! Error: ' + err });
+   }
+   finally {
+      await disconnect();
+   }
+}
+
+/**
  * Update a collection by Id
  * @param req 
  * @param res 

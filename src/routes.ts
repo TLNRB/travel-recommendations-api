@@ -6,7 +6,7 @@ import { getAllPermissions, getPermissionsByQuery } from './controllers/permissi
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
 import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
-import { createCollection, deleteCollectionById, getAllCollections, updateCollectionById } from './controllers/collectionController';
+import { createCollection, deleteCollectionById, getAllCollections, getCollectionsByQuery, updateCollectionById } from './controllers/collectionController';
 
 const router: Router = Router();
 
@@ -773,6 +773,58 @@ router.post('/collections', verifyToken, createCollection);
  *                     $ref: '#/components/schemas/collection'
  */
 router.get('/collections', getAllCollections);
+/**
+ * @swagger
+ * /collections/query:
+ *   get:
+ *     tags:
+ *       - Collection Routes
+ *     summary: Get collections by query
+ *     description: |
+ *       Get collections based on a specific field and value. Populates the user or place or both if corresponding populate parameters are true, else ids are returned
+ *     parameters:
+ *       - name: field
+ *         in: query
+ *         required: true
+ *         description: Field we want to query by
+ *         schema:
+ *           type: string
+ *       - name: value
+ *         in: query
+ *         required: true
+ *         description: Value of the field.
+ *         schema:
+ *           type: string
+ *       - name: populateCreatedBy
+ *         in: query
+ *         required: true
+ *         description: Populate the user in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *       - name: populatePlace
+ *         in: query
+ *         required: true
+ *         description: Populate the place in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *     responses:
+ *       200:
+ *         description: Collection(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Collection'
+ */
+router.get('/collections/query', getCollectionsByQuery);
 /**
  * @swagger
  * /collections/{id}:
