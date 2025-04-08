@@ -7,6 +7,7 @@ import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleByI
 import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
 import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
 import { createCollection, deleteCollectionById, getAllCollections, getCollectionsByQuery, updateCollectionById } from './controllers/collectionController';
+import { createCityWithImages, getAllCitiesWithImages, getCityWithImagesByQuery, updateCityWithImagesById, deleteCityWithImagesById } from './controllers/cityImagesController'
 
 const router: Router = Router();
 
@@ -891,5 +892,166 @@ router.put('/collections/:id', verifyToken, updateCollectionById);
  *                   type: string
  */
 router.delete('/collections/:id', verifyToken, deleteCollectionById);
+
+// CITY IMAGES routes
+/**
+ * @swagger
+ * /cities-images:
+ *   post:
+ *     tags:
+ *       - City Images Routes
+ *     summary: Create a new city with image
+ *     description: Takes a city images object in the body and creates a city with images in the database.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CityImages'
+ *     responses:
+ *       201:
+ *         description: City with images created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/CityImages'
+ */
+router.post('/cities-images', verifyToken, createCityWithImages);
+/**
+ * @swagger
+ * /cities-images:
+ *   get:
+ *     tags:
+ *       - City Images Routes
+ *     summary: Get all cities with images
+ *     description: Get all cities with images as JSON obejects in an array.
+ *     responses:
+ *       200:
+ *         description: City(s) with images retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/CityImages'
+ */
+router.get('/cities-images', getAllCitiesWithImages);
+/**
+ * @swagger
+ * /cities-images/query:
+ *   get:
+ *     tags:
+ *       - City Images Routes
+ *     summary: Get cities with images by query
+ *     description: Get cities with images based on a specific field and value. 
+ *     parameters:
+ *       - name: field
+ *         in: query
+ *         required: true
+ *         description: Field we want to query by
+ *         schema:
+ *           type: string
+ *       - name: value
+ *         in: query
+ *         required: true
+ *         description: Value of the field.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: City(s) with images retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/CityImages'
+ */
+router.get('/cities-images/query', getCityWithImagesByQuery);
+/**
+ * @swagger
+ * /cities-images/{id}:
+ *   put:
+ *     tags:
+ *       - City Images Routes
+ *     summary: Update a specific city with images
+ *     description: Takes a city images object in the body and updates a city with images in the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the city with images to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CityImages'
+ *     responses:
+ *       200:
+ *         description: City with images updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/cities-images/:id', verifyToken, updateCityWithImagesById);
+/**
+ * @swagger
+ * /cities-images/{id}:
+ *   delete:
+ *     tags:
+ *       - City Images Routes
+ *     summary: Delete a specific city with images
+ *     description: Deletes a city with images from the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the city with images to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: City with images deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.delete('/cities-images/:id', verifyToken, deleteCityWithImagesById);
 
 export default router;

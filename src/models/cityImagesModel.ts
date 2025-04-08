@@ -3,6 +3,7 @@ import { CityImages } from '../interfaces/cityImages'
 
 const cityImagesSchema = new Schema<CityImages>({
    name: { type: String, required: true, min: 2, max: 100 },
+   country: { type: String, required: true, min: 2, max: 100 },
    images: [
       {
          url: { type: String, required: true },

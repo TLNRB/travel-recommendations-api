@@ -4,6 +4,7 @@ import { userModel } from "../models/userModel";
 import { placeModel } from "../models/placeModel";
 import { recommendationModel } from "../models/recommendationModel";
 import { collectionModel } from "../models/collectionModel";
+import { cityImagesModel } from "../models/cityImagesModel";
 
 import { connect, disconnect } from "../repository/database";
 import bcrypt from "bcrypt";
@@ -39,6 +40,7 @@ export async function deleteAllData(): Promise<void> {
    await placeModel.deleteMany({});
    await recommendationModel.deleteMany({});
    await collectionModel.deleteMany({});
+   await cityImagesModel.deleteMany({});
 
    console.log("All data deleted successfully.");
 }
@@ -274,6 +276,64 @@ export async function seedData(): Promise<void> {
       }
    ]
    await collectionModel.insertMany(collections);
+
+   // Create cities with images
+   const citiesImages = [
+      {
+         name: "Budapest",
+         country: "Hungary",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            },
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 2 alt text"
+            }
+         ]
+      },
+      {
+         name: "Seattle",
+         country: "USA",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            }
+         ]
+      },
+      {
+         name: "London",
+         country: "England",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            }
+         ]
+      },
+      {
+         name: "Tokyo",
+         country: "Japan",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            },
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 2 alt text"
+            },
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 3 alt text"
+            }
+         ]
+      }
+
+   ]
+   await cityImagesModel.insertMany(citiesImages);
 
    console.log("Data seeded successfully.");
 }

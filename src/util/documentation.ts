@@ -147,6 +147,23 @@ export function setupDocs(app: Application): void {
                   visible: { type: 'boolean' }
                }
             },
+            CityImages: {
+               type: 'object',
+               properties: {
+                  name: { type: 'string' },
+                  country: { type: 'string' },
+                  images: {
+                     type: 'array',
+                     items: {
+                        type: 'object',
+                        properties: {
+                           url: { type: 'string' },
+                           alt: { type: 'string' }
+                        }
+                     }
+                  }
+               }
+            },
          }
       }
    };
