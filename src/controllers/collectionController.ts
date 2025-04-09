@@ -229,8 +229,8 @@ function validateCollectionData(data: any): ValidationResult {
  * @param res 
  */
 function populateCollections(query: any, populateCreatedBy: boolean, populatePlaces: boolean) {
-   if (populateCreatedBy) query = query.populate('_createdBy');
-   if (populatePlaces) query = query.populate('places', 'name');
+   if (populateCreatedBy) query = query.populate('_createdBy', 'firstName lastName username profilePicture');
+   if (populatePlaces) query = query.populate('places', 'name images location');
 
    return query;
 }

@@ -234,8 +234,8 @@ function validateRecommendationData(data: Recommendation): ValidationResult {
  * @param res 
  */
 function populateRecommendations(query: any, populateCreatedBy: boolean, populatePlace: boolean) {
-   if (populateCreatedBy) query = query.populate('_createdBy');
-   if (populatePlace) query = query.populate('place');
+   if (populateCreatedBy) query = query.populate('_createdBy', 'firstName lastName username profilePicture role');
+   if (populatePlace) query = query.populate('place', 'name images location');
 
    return query;
 }

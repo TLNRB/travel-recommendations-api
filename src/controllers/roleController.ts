@@ -66,7 +66,7 @@ export async function getAllRoles(req: Request, res: Response): Promise<void> {
       let roles;
 
       if (populate) {
-         roles = await roleModel.find({}).populate('permissions', 'name description');
+         roles = await roleModel.find({}).populate('permissions');
       }
       else {
          roles = await roleModel.find({});
@@ -111,10 +111,10 @@ export async function getRolesByQuery(req: Request, res: Response): Promise<void
          }
 
          // If populate is true, populate the permissions field
-         populate ? roles = await roleModel.find({ [field]: value }).populate('permissions', 'name description') : roles = await roleModel.find({ [field]: value });
+         populate ? roles = await roleModel.find({ [field]: value }).populate('permissions') : roles = await roleModel.find({ [field]: value });
       }
       else {
-         populate ? roles = await roleModel.find({ [field]: { $regex: value, $options: 'i' } }).populate('permissions', 'name description') : roles = await roleModel.find({ [field]: { $regex: value, $options: 'i' } });
+         populate ? roles = await roleModel.find({ [field]: { $regex: value, $options: 'i' } }).populate('permissions') : roles = await roleModel.find({ [field]: { $regex: value, $options: 'i' } });
       }
 
       res.status(200).json({ error: null, data: roles });
