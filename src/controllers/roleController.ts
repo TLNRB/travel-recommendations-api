@@ -29,7 +29,7 @@ export async function createRole(req: Request, res: Response): Promise<void> {
       await connect();
 
       // Check if the role already exists
-      const existingRole = await roleModel.findOne({ name: req.body.name });
+      const existingRole = await roleModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
       if (existingRole) {
          res.status(400).json({ error: 'Role with this name already exists!' });
          return;
@@ -152,6 +152,13 @@ export async function updateRoleById(req: Request, res: Response): Promise<void>
       }
 
       await connect();
+
+      // Check if the role already exists
+      const existingRole = await roleModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
+      if (existingRole && existingRole._id !== id) {
+         res.status(400).json({ error: 'Role with this name already exists!' });
+         return;
+      }
 
       // Check if the role exists and update it
       const result = await roleModel.findByIdAndUpdate(id, req.body);

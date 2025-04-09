@@ -33,7 +33,7 @@ export async function createCountryWithImages(req: Request, res: Response): Prom
       await connect();
 
       // Check if the country already exists
-      const existingCountry = await countryImagesModel.findOne({ name: req.body.name });
+      const existingCountry = await countryImagesModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
       if (existingCountry) {
          res.status(400).json({ error: 'Country with this name already exists!' });
          return;
@@ -152,7 +152,7 @@ export async function updateCountryWithImagesById(req: Request, res: Response): 
       await connect();
 
       // Check if the country exists with the same name
-      const existingCountry = await countryImagesModel.findOne({ name: req.body.name });
+      const existingCountry = await countryImagesModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
 
       if (existingCountry && existingCountry._id !== id) {
          res.status(400).json({ error: 'Country with this name already exists!' });

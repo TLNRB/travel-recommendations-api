@@ -40,9 +40,13 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
       await connect();
 
       // Check if the place already exists
-      const existingPlace = await placeModel.findOne({ name: req.body.name });
+      const existingPlace = await placeModel.findOne({
+         name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' },
+         'location.city': { $regex: `^${req.body.location.city.trim()}$`, $options: 'i' },
+         'location.country': { $regex: `^${req.body.location.country.trim()}$`, $options: 'i' }
+      });
       if (existingPlace) {
-         res.status(400).json({ error: 'Place with this name already exists!' });
+         res.status(400).json({ error: 'Place with this name in this city and country already exists!' });
          return;
       }
 
@@ -200,6 +204,18 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
       await connect();
 
       const { _createdBy, ...safeBody } = req.body; // Exclude _createdBy from the update object
+
+      // Check if the city exists with the same name and country
+      const existingPlace = await placeModel.findOne({
+         name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' },
+         'location.city': { $regex: `^${req.body.location.city.trim()}$`, $options: 'i' },
+         'location.country': { $regex: `^${req.body.location.country.trim()}$`, $options: 'i' }
+      });
+
+      if (existingPlace && existingPlace._id !== id) {
+         res.status(400).json({ error: 'Place in this citry and country with this name already exists!' });
+         return;
+      }
 
       // Check if the place exists
       const result = await placeModel.findByIdAndUpdate(id, safeBody);
