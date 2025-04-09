@@ -164,6 +164,22 @@ export function setupDocs(app: Application): void {
                   }
                }
             },
+            CountryImages: {
+               type: 'object',
+               properties: {
+                  name: { type: 'string' },
+                  images: {
+                     type: 'array',
+                     items: {
+                        type: 'object',
+                        properties: {
+                           url: { type: 'string' },
+                           alt: { type: 'string' }
+                        }
+                     }
+                  }
+               }
+            }
          }
       }
    };

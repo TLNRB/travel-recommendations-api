@@ -5,6 +5,7 @@ import { placeModel } from "../models/placeModel";
 import { recommendationModel } from "../models/recommendationModel";
 import { collectionModel } from "../models/collectionModel";
 import { cityImagesModel } from "../models/cityImagesModel";
+import { countryImagesModel } from "../models/countryImagesModel";
 
 import { connect, disconnect } from "../repository/database";
 import bcrypt from "bcrypt";
@@ -41,6 +42,7 @@ export async function deleteAllData(): Promise<void> {
    await recommendationModel.deleteMany({});
    await collectionModel.deleteMany({});
    await cityImagesModel.deleteMany({});
+   await countryImagesModel.deleteMany({});
 
    console.log("All data deleted successfully.");
 }
@@ -334,6 +336,60 @@ export async function seedData(): Promise<void> {
 
    ]
    await cityImagesModel.insertMany(citiesImages);
+
+   // Create countries with images
+   const countriesImages = [
+      {
+         name: "Hungary",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            },
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 2 alt text"
+            }
+         ]
+      },
+      {
+         name: "USA",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            }
+         ]
+      },
+      {
+         name: "England",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            }
+         ]
+      },
+      {
+         name: "Japan",
+         images: [
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 1 alt text"
+            },
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 2 alt text"
+            },
+            {
+               url: "https://picsum.photos/500/500",
+               alt: "Image 3 alt text"
+            }
+         ]
+      }
+
+   ]
+   await countryImagesModel.insertMany(countriesImages);
 
    console.log("Data seeded successfully.");
 }

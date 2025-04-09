@@ -8,7 +8,7 @@ import { CityImages } from '../interfaces/cityImages';
 import { connect, disconnect } from '../repository/database';
 
 /**
- * Create a new city with image
+ * Create a new city with images
  * @param req
  * @param res
  */
@@ -80,11 +80,11 @@ export async function getAllCitiesWithImages(req: Request, res: Response): Promi
 }
 
 /**
- * Get a city with images by query
+ * Get cities with images by query
  * @param req
  * @param res
  */
-export async function getCityWithImagesByQuery(req: Request, res: Response): Promise<void> {
+export async function getCitiesWithImagesByQuery(req: Request, res: Response): Promise<void> {
    try {
       // Sanitize query parameters
       const field: string = xss(req.query.field as string);
