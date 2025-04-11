@@ -212,7 +212,7 @@ export async function deleteCollectionById(req: Request, res: Response): Promise
  * @param req 
  * @param res 
  */
-function validateCollectionData(data: any): ValidationResult {
+function validateCollectionData(data: Collection): ValidationResult {
    const schema = Joi.object({
       _createdBy: Joi.string().required(),
       name: Joi.string().min(2).max(100).required(),

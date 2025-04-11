@@ -9,12 +9,9 @@ import { createRecommendation, getAllRecommendations, getRecommendationsByQuery,
 import { createCollection, deleteCollectionById, getAllCollections, getCollectionsByQuery, updateCollectionById } from './controllers/collectionController';
 import { createCityWithImages, getAllCitiesWithImages, getCitiesWithImagesByQuery, updateCityWithImagesById, deleteCityWithImagesById } from './controllers/cityImagesController'
 import { createCountryWithImages, getAllCountriesWithImages, getCountriesWithImagesByQuery, updateCountryWithImagesById, deleteCountryWithImagesById } from './controllers/countryImagesController';
+import { getAllUsers, getUsersByQuery, updateUserById } from './controllers/userController';
 
 const router: Router = Router();
-
-/**
- * TODO: getAll, getByQuery, and update on user
- */
 
 // Welcome route
 /**
@@ -101,6 +98,121 @@ router.post('/user/register', registerUser);
  */
 router.post('/user/login', loginUser);
 
+// USER routes
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     tags:
+ *       - User Routes
+ *     summary: Get all users
+ *     description: Get all users as JSON obejects in an array.
+ *     responses:
+ *       200:
+ *         description: User(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ExistingUser'
+ */
+router.get('/users', getAllUsers);
+/**
+ * @swagger
+ * /users/query:
+ *   get:
+ *     tags:
+ *       - User Routes
+ *     summary: Get users by query
+ *     description: |
+ *       Get users based on a specific field and value. Populates the role if populate parameter is true.
+ *     parameters:
+ *       - name: field
+ *         in: query
+ *         required: true
+ *         description: Field we want to query by
+ *         schema:
+ *           type: string
+ *       - name: value
+ *         in: query
+ *         required: true
+ *         description: Value of the field.
+ *         schema:
+ *           type: string
+ *       - name: populate
+ *         in: query
+ *         required: true
+ *         description: Populate the role in the response.
+ *         schema:
+ *           type: boolean
+ *           default: false
+ *     responses:
+ *       200:
+ *         description: User(s) retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ExistingUser'
+ */
+router.get('/users/query', getUsersByQuery);
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     tags:
+ *       - User Routes
+ *     summary: Update a specific user
+ *     description: |
+ *       Takes a user object in the body and updates a user in the database based on its Id. (Note: takes the Id of the user who is logged in so if the user role is being updated, it is checked if the user has the permission to do so)
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the user to update.
+ *         schema:
+ *           type: string
+ *       - name: editingUserId
+ *         in: query
+ *         required: true
+ *         description: Id if the user who is logged in.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateUser'
+ *     responses:
+ *       200:
+ *         description: User updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/users/:id', verifyToken, updateUserById);
+
 // PLACE routes
 /**
  * @swagger
@@ -117,7 +229,7 @@ router.post('/user/login', loginUser);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Place'
+ *             $ref: '#/components/schemas/PlaceUnpopulated'
  *     responses:
  *       201:
  *         description: Place created successfully.
@@ -129,7 +241,7 @@ router.post('/user/login', loginUser);
  *                 error:
  *                   type: string
  *                 data:
- *                   $ref: '#/components/schemas/Place'
+ *                   $ref: '#/components/schemas/PlaceUnpopulated'
  */
 router.post('/places', verifyToken, createPlace);
 /**
@@ -153,7 +265,7 @@ router.post('/places', verifyToken, createPlace);
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Place'
+ *                     $ref: '#/components/schemas/PlacePopulated'
  */
 router.get('/places', getAllPlaces);
 /**
@@ -190,7 +302,7 @@ router.get('/places', getAllPlaces);
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Place'
+ *                     $ref: '#/components/schemas/PlacePopulated'
  */
 router.get('/places/query', getPlacesByQuery);
 /**
@@ -215,7 +327,7 @@ router.get('/places/query', getPlacesByQuery);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Place'
+ *             $ref: '#/components/schemas/PlaceUnpopulated'
  *     responses:
  *       200:
  *         description: Place updated successfully.
@@ -278,7 +390,7 @@ router.delete('/places/:id', verifyToken, deletePlaceById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Recommendation'
+ *             $ref: '#/components/schemas/RecommendationUnpopulated'
  *     responses:
  *       201:
  *         description: Recommendation created successfully.
@@ -290,7 +402,7 @@ router.delete('/places/:id', verifyToken, deletePlaceById);
  *                 error:
  *                   type: string
  *                 data:
- *                   $ref: '#/components/schemas/Recommendation'
+ *                   $ref: '#/components/schemas/RecommendationUnpopulated'
  */
 router.post('/recommendations', verifyToken, createRecommendation);
 /**
@@ -330,7 +442,7 @@ router.post('/recommendations', verifyToken, createRecommendation);
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Recommendation'
+ *                     $ref: '#/components/schemas/RecommendationPopulated'
  */
 router.get('/recommendations', getAllRecommendations);
 /**
@@ -382,7 +494,7 @@ router.get('/recommendations', getAllRecommendations);
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Recommendation'
+ *                     $ref: '#/components/schemas/RecommendationPopulated'
  */
 router.get('/recommendations/query', getRecommendationsByQuery);
 /**
@@ -407,7 +519,7 @@ router.get('/recommendations/query', getRecommendationsByQuery);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Recommendation'
+ *             $ref: '#/components/schemas/RecommendationUnpopulated'
  *     responses:
  *       200:
  *         description: Recommendation updated successfully.
@@ -714,7 +826,7 @@ router.get('/permissions/query', getPermissionsByQuery);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Collection'
+ *             $ref: '#/components/schemas/CollectionUnpopulated'
  *     responses:
  *       201:
  *         description: Collection created successfully.
@@ -726,7 +838,7 @@ router.get('/permissions/query', getPermissionsByQuery);
  *                 error:
  *                   type: string
  *                 data:
- *                   $ref: '#/components/schemas/Collection'
+ *                   $ref: '#/components/schemas/CollectionUnpopulated'
  */
 router.post('/collections', verifyToken, createCollection);
 /**
@@ -766,7 +878,7 @@ router.post('/collections', verifyToken, createCollection);
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/collection'
+ *                     $ref: '#/components/schemas/CollectionPopulated'
  */
 router.get('/collections', getAllCollections);
 /**
@@ -818,7 +930,7 @@ router.get('/collections', getAllCollections);
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Collection'
+ *                     $ref: '#/components/schemas/CollectionPopulated'
  */
 router.get('/collections/query', getCollectionsByQuery);
 /**
@@ -843,7 +955,7 @@ router.get('/collections/query', getCollectionsByQuery);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Collection'
+ *             $ref: '#/components/schemas/CollectionUnpopulated'
  *     responses:
  *       200:
  *         description: Collection updated successfully.

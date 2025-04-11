@@ -6,7 +6,6 @@ import Joi, { ValidationResult } from 'joi';
 import { recommendationModel } from '../models/recommendationModel';
 import { Recommendation } from '../interfaces/recommendation';
 import { connect, disconnect } from '../repository/database';
-import { title } from 'process';
 
 /**
  * Create a new recommendation
