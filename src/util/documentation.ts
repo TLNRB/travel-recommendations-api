@@ -67,6 +67,30 @@ export function setupDocs(app: Application): void {
                   password: { type: 'string' }
                }
             },
+            UpdateUser: {
+               type: 'object',
+               properties: {
+                  firstName: { type: 'string' },
+                  lastName: { type: 'string' },
+                  username: { type: 'string' },
+                  profilePicture: { type: 'string' },
+                  bio: { type: 'string' },
+                  country: { type: 'string' },
+                  city: { type: 'string' },
+                  socials: {
+                     type: 'array',
+                     items: {
+                        type: 'object',
+                        properties: {
+                           name: { type: 'string' },
+                           link: { type: 'string' },
+                           icon: { type: 'string' }
+                        }
+                     }
+                  },
+                  role: { type: 'string' },
+               }
+            },
             ExistingUser: {
                type: 'object',
                properties: {
@@ -90,11 +114,11 @@ export function setupDocs(app: Application): void {
                         }
                      }
                   },
-                  role: { $ref: '#/components/schemas/Role' },
+                  role: { $ref: '#/components/schemas/RoleUnpopulated' },
                   registerDate: { type: 'string' }
                }
             },
-            Place: {
+            PlaceUnpopulated: {
                type: 'object',
                properties: {
                   name: { type: 'string' },
@@ -122,7 +146,35 @@ export function setupDocs(app: Application): void {
                   _createdBy: { type: 'string' }
                }
             },
-            Recommendation: {
+            PlacePopulated: {
+               type: 'object',
+               properties: {
+                  name: { type: 'string' },
+                  description: { type: 'string' },
+                  images: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  },
+                  location: {
+                     type: 'object',
+                     properties: {
+                        continent: { type: 'string' },
+                        country: { type: 'string' },
+                        city: { type: 'string' },
+                        street: { type: 'string' },
+                        streetNumber: { type: 'string' }
+                     }
+                  },
+                  upvotes: { type: 'number' },
+                  tags: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  },
+                  approved: { type: 'boolean' },
+                  _createdBy: { $ref: '#/components/schemas/ExistingUser' }
+               }
+            },
+            RecommendationUnpopulated: {
                type: 'object',
                properties: {
                   _createdBy: { type: 'string' },
@@ -135,7 +187,20 @@ export function setupDocs(app: Application): void {
                   upvotes: { type: 'number' }
                }
             },
-            Collection: {
+            RecommendationPopulated: {
+               type: 'object',
+               properties: {
+                  _createdBy: { $ref: '#/components/schemas/ExistingUser' },
+                  place: { $ref: '#/components/schemas/PlaceUnpopulated' },
+                  title: { type: 'string' },
+                  content: { type: 'string' },
+                  dateOfVisit: { type: 'string' },
+                  dateOfWriting: { type: 'string' },
+                  rating: { type: 'number' },
+                  upvotes: { type: 'number' }
+               }
+            },
+            CollectionUnpopulated: {
                type: 'object',
                properties: {
                   _createdBy: { type: 'string' },
@@ -143,6 +208,18 @@ export function setupDocs(app: Application): void {
                   places: {
                      type: 'array',
                      items: { type: 'string' }
+                  },
+                  visible: { type: 'boolean' }
+               }
+            },
+            CollectionPopulated: {
+               type: 'object',
+               properties: {
+                  _createdBy: { $ref: '#/components/schemas/ExistingUser' },
+                  name: { type: 'string' },
+                  places: {
+                     type: 'array',
+                     items: { $ref: '#/components/schemas/PlaceUnpopulated' }
                   },
                   visible: { type: 'boolean' }
                }
