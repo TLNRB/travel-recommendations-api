@@ -218,7 +218,7 @@ export async function deleteCityWithImagesById(req: Request, res: Response): Pro
  * @param data
  */
 
-function validateCityWithImagesData(data: any): ValidationResult {
+function validateCityWithImagesData(data: CityImages): ValidationResult {
    const schema = Joi.object({
       name: Joi.string().min(2).max(100).required(),
       country: Joi.string().min(2).max(100).required(),

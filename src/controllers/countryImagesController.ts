@@ -215,7 +215,7 @@ export async function deleteCountryWithImagesById(req: Request, res: Response): 
  * @param data
  */
 
-function validateCountryWithImagesData(data: any): ValidationResult {
+function validateCountryWithImagesData(data: CountryImages): ValidationResult {
    const schema = Joi.object({
       name: Joi.string().min(2).max(100).required(),
       images: Joi.array().items(
