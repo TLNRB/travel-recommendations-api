@@ -21,23 +21,30 @@ function setupCors(): void {
    }))
 }
 
-export function startServer(): void {
-   setupCors();
+export async function startServer(): Promise<void> {
+   try {
+      setupCors();
 
-   // JSON body parser
-   app.use(express.json());
+      // JSON body parser
+      app.use(express.json());
 
-   // Binding the routes to the app
-   app.use('/api', routes);
+      // Binding the routes to the app
+      app.use('/api', routes);
 
-   // Setup swagger documentation
-   setupDocs(app);
+      // Setup swagger documentation
+      setupDocs(app);
 
-   // Test database connection
-   testConnection();
+      // Test database connection
+      await testConnection();
 
-   const PORT: number = parseInt(process.env.PORT as string) || 4000;
-   app.listen(PORT, () => {
-      console.log('Server is running on port: ' + PORT);
-   })
+      const PORT: number = parseInt(process.env.PORT as string) || 4000;
+      app.listen(PORT, () => {
+         console.log('Server is running on port: ' + PORT);
+      })
+   }
+   catch (err) {
+      console.error('Error starting server: ', err);
+      process.exit(1); // Exit the process with failure
+   }
+
 }
