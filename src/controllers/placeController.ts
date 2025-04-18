@@ -212,7 +212,7 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
          'location.country': { $regex: `^${req.body.location.country.trim()}$`, $options: 'i' }
       });
 
-      if (existingPlace && existingPlace._id !== id) {
+      if (existingPlace && existingPlace._id != id) {
          res.status(400).json({ error: `Place in this city and country with this name already exists! id=${id} existingPlace._id=${existingPlace._id}` });
          return;
       }
