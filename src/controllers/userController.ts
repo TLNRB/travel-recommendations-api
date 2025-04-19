@@ -6,7 +6,6 @@ import Joi, { ValidationResult } from 'joi';
 import { userModel } from '../models/userModel';
 import { roleModel } from '../models/roleModel';
 import { User } from '../interfaces/user';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Get all users
@@ -15,8 +14,6 @@ import { connect, disconnect } from '../repository/database';
  */
 export async function getAllUsers(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
-
       // Decide if we want to populate the role or not
       const populate: boolean = req.query.populate === 'true';
 
@@ -40,9 +37,6 @@ export async function getAllUsers(req: Request, res: Response): Promise<void> {
    catch (err) {
       res.status(500).json({ error: 'Error getting all users! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -61,8 +55,6 @@ export async function getUsersByQuery(req: Request, res: Response): Promise<void
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let users;
 
@@ -109,9 +101,6 @@ export async function getUsersByQuery(req: Request, res: Response): Promise<void
    catch (err) {
       res.status(500).json({ error: 'Error getting users by query! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -151,8 +140,6 @@ export async function updateUserById(req: Request, res: Response): Promise<void>
          res.status(400).json({ error: 'Invalid Id format' });
          return;
       }
-
-      await connect();
 
       // Check if the username is already taken
       const existingUsername = await userModel.findOne({ username: { $regex: `^${req.body.username.trim()}$`, $options: 'i' } });
@@ -197,9 +184,6 @@ export async function updateUserById(req: Request, res: Response): Promise<void>
    }
    catch (err) {
       res.status(500).json({ error: 'Error updating user! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 

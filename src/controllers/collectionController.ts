@@ -5,7 +5,6 @@ import Joi, { ValidationResult } from 'joi';
 
 import { collectionModel } from '../models/collectionModel';
 import { Collection } from '../interfaces/collection';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Create a new collection
@@ -24,8 +23,6 @@ export async function createCollection(req: Request, res: Response): Promise<voi
       // Sanitize user input
       req.body.name = xss(req.body.name);
 
-      await connect();
-
       // Create a new collection object
       const collectionObject = new collectionModel({
          _createdBy: req.body._createdBy,
@@ -41,9 +38,6 @@ export async function createCollection(req: Request, res: Response): Promise<voi
    catch (err) {
       res.status(500).json({ error: 'Error creating a collection! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -53,8 +47,6 @@ export async function createCollection(req: Request, res: Response): Promise<voi
  */
 export async function getAllCollections(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
-
       // Decide if we want to populate the places and/or users or not
       const populateCreatedBy: boolean = req.query.populateCreatedBy === 'true';
       const populatePlace: boolean = req.query.populatePlace === 'true';
@@ -67,9 +59,6 @@ export async function getAllCollections(req: Request, res: Response): Promise<vo
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all collections! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -90,8 +79,6 @@ export async function getCollectionsByQuery(req: Request, res: Response): Promis
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let collections;
 
@@ -122,9 +109,6 @@ export async function getCollectionsByQuery(req: Request, res: Response): Promis
    catch (err) {
       res.status(500).json({ error: 'Error getting collection by query! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -150,8 +134,6 @@ export async function updateCollectionById(req: Request, res: Response): Promise
          return;
       }
 
-      await connect();
-
       const { _createdBy, ...safeBody } = req.body; // Extract _createdBy from the body
 
       // Check if the collection exists
@@ -166,9 +148,6 @@ export async function updateCollectionById(req: Request, res: Response): Promise
    }
    catch (err) {
       res.status(500).json({ error: 'Error updating a collection! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -187,8 +166,6 @@ export async function deleteCollectionById(req: Request, res: Response): Promise
          return;
       }
 
-      await connect();
-
       // Check if the collection exists
       const collection = await collectionModel.findByIdAndDelete(id);
       if (!collection) {
@@ -201,9 +178,6 @@ export async function deleteCollectionById(req: Request, res: Response): Promise
    }
    catch (err) {
       res.status(500).json({ error: 'Error deleting collection! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 

@@ -5,7 +5,6 @@ import Joi, { ValidationResult } from 'joi';
 
 import { recommendationModel } from '../models/recommendationModel';
 import { Recommendation } from '../interfaces/recommendation';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Create a new recommendation
@@ -25,8 +24,6 @@ export async function createRecommendation(req: Request, res: Response): Promise
       req.body.title = xss(req.body.title);
       req.body.content = xss(req.body.content);
 
-      await connect();
-
       const recommendationObject = new recommendationModel({
          _createdBy: req.body._createdBy,
          place: req.body.place,
@@ -42,9 +39,6 @@ export async function createRecommendation(req: Request, res: Response): Promise
    catch (err) {
       res.status(500).json({ error: 'Error creating a recommendation! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -54,7 +48,6 @@ export async function createRecommendation(req: Request, res: Response): Promise
  */
 export async function getAllRecommendations(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
 
       // Decide if we want to populate the createdBy or place or both or none
       const populateCreatedBy: boolean = req.query.populateCreatedBy === 'true';
@@ -68,9 +61,6 @@ export async function getAllRecommendations(req: Request, res: Response): Promis
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all recommendations! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -91,8 +81,6 @@ export async function getRecommendationsByQuery(req: Request, res: Response): Pr
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let recommendations;
 
@@ -123,9 +111,6 @@ export async function getRecommendationsByQuery(req: Request, res: Response): Pr
    catch (err) {
       res.status(500).json({ error: 'Error getting recommendations by query! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -152,8 +137,6 @@ export async function updateRecommendationById(req: Request, res: Response): Pro
          return;
       }
 
-      await connect();
-
       const { _createdBy, place, dateOfWriting, ...safeBody } = req.body; // Exclude _createdBy, place, dateOfWriting from the body
 
       // Check if the recommendation exists
@@ -168,9 +151,6 @@ export async function updateRecommendationById(req: Request, res: Response): Pro
    }
    catch (err) {
       res.status(500).json({ error: 'Error updating a recommendation! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -188,8 +168,6 @@ export async function deleteRecommendationById(req: Request, res: Response): Pro
          return;
       }
 
-      await connect();
-
       // Check if the recommendation exists
       const recommendation = await recommendationModel.findByIdAndDelete(id);
       if (!recommendation) {
@@ -202,9 +180,6 @@ export async function deleteRecommendationById(req: Request, res: Response): Pro
    }
    catch (err) {
       res.status(500).json({ error: 'Error deleting recommendation! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 

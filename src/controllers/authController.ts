@@ -7,7 +7,6 @@ import Joi, { ValidationResult } from 'joi';
 import { userModel } from '../models/userModel';
 import { roleModel } from '../models/roleModel';
 import { User } from '../interfaces/user';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Register a new user as (user)
@@ -28,8 +27,6 @@ export async function registerUser(req: Request, res: Response): Promise<void> {
       req.body.lastName = xss(req.body.lastName);
       req.body.username = xss(req.body.username);
       req.body.email = xss(req.body.email);
-
-      await connect();
 
       // Check if the email or username already exists
       const emailExists = await userModel.findOne({ email: req.body.email });
@@ -76,9 +73,6 @@ export async function registerUser(req: Request, res: Response): Promise<void> {
    catch (err) {
       res.status(500).json({ error: 'Error registering the user! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -98,8 +92,6 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
       // Sanitize user input
       req.body.email = xss(req.body.email);
       req.body.password = xss(req.body.password);
-
-      await connect();
 
       // Find the user by email
       const user = await userModel.findOne({ email: req.body.email });
@@ -135,9 +127,6 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
    catch (err) {
       res.status(500).json({ error: 'Error logging in the user! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -167,7 +156,6 @@ export function validateUserLoginData(data: User): ValidationResult {
    })
 
    return schema.validate(data);
-
 }
 
 /**

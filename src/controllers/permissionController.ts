@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import xss from 'xss';
 
 import { permissionModel } from '../models/permissionModel';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Get all permissions
@@ -11,17 +10,12 @@ import { connect, disconnect } from '../repository/database';
  */
 export async function getAllPermissions(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
-
       const result = await permissionModel.find({});
 
       res.status(200).json({ error: null, data: result });
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all permission! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -40,8 +34,6 @@ export async function getPermissionsByQuery(req: Request, res: Response): Promis
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let permissions;
 
@@ -62,8 +54,5 @@ export async function getPermissionsByQuery(req: Request, res: Response): Promis
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting permissions by query! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }

@@ -6,7 +6,6 @@ import Joi, { ValidationResult } from 'joi';
 import { roleModel } from '../models/roleModel';
 import { userModel } from '../models/userModel';
 import { Role } from '../interfaces/role';
-import { connect, disconnect } from '../repository/database';
 
 
 /**
@@ -25,8 +24,6 @@ export async function createRole(req: Request, res: Response): Promise<void> {
 
       // Sanitize user input
       req.body.name = xss(req.body.name);
-
-      await connect();
 
       // Check if the role already exists
       const existingRole = await roleModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
@@ -47,9 +44,6 @@ export async function createRole(req: Request, res: Response): Promise<void> {
    catch (err) {
       res.status(500).json({ error: 'Error creating a role! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -59,8 +53,6 @@ export async function createRole(req: Request, res: Response): Promise<void> {
  */
 export async function getAllRoles(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
-
       // Decide if we want to populate the permissions or not
       const populate: boolean = req.query.populate === 'true';
       let roles;
@@ -76,9 +68,6 @@ export async function getAllRoles(req: Request, res: Response): Promise<void> {
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all roles! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -98,8 +87,6 @@ export async function getRolesByQuery(req: Request, res: Response): Promise<void
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let roles;
 
@@ -121,9 +108,6 @@ export async function getRolesByQuery(req: Request, res: Response): Promise<void
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting roles by query! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -151,8 +135,6 @@ export async function updateRoleById(req: Request, res: Response): Promise<void>
          return;
       }
 
-      await connect();
-
       // Check if the role already exists
       const existingRole = await roleModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
       if (existingRole && existingRole._id !== id) {
@@ -173,9 +155,6 @@ export async function updateRoleById(req: Request, res: Response): Promise<void>
    catch (err) {
       res.status(500).json({ error: 'Error updating role! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -191,8 +170,6 @@ export async function deleteRoleById(req: Request, res: Response): Promise<void>
          res.status(400).json({ error: 'Invalid role Id format' });
          return;
       }
-
-      await connect();
 
       // Check if the role exists
       const role = await roleModel.findById(id);
@@ -217,9 +194,6 @@ export async function deleteRoleById(req: Request, res: Response): Promise<void>
    }
    catch (err) {
       res.status(500).json({ error: 'Error deleting role! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 

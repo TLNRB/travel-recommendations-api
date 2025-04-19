@@ -7,7 +7,6 @@ import { placeModel } from '../models/placeModel';
 import { userModel } from '../models/userModel';
 import { recommendationModel } from '../models/recommendationModel';
 import { Place } from '../interfaces/place';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Create a new place
@@ -36,8 +35,6 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
          streetNumber: xss(streetNumber)
       };
       req.body.tags = req.body.tags.map((tag: string) => xss(tag));
-
-      await connect();
 
       // Check if the place already exists
       const existingPlace = await placeModel.findOne({
@@ -95,9 +92,6 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
    catch (err) {
       res.status(500).json({ error: 'Error creating a place! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -107,17 +101,12 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
  */
 export async function getAllPlaces(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
-
       const places = await placeModel.find({});
 
       res.status(200).json({ error: null, data: places });
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all places! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -136,8 +125,6 @@ export async function getPlacesByQuery(req: Request, res: Response): Promise<voi
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let places;
 
@@ -161,9 +148,6 @@ export async function getPlacesByQuery(req: Request, res: Response): Promise<voi
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting places! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -201,8 +185,6 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
          return;
       }
 
-      await connect();
-
       const { _createdBy, ...safeBody } = req.body; // Exclude _createdBy from the update object
 
       // Check if the city exists with the same name and country
@@ -230,9 +212,6 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
    catch (err) {
       res.status(500).json({ error: 'Error updating a place! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -248,8 +227,6 @@ export async function deletePlaceById(req: Request, res: Response): Promise<void
          res.status(400).json({ error: 'Invalid place Id format' });
          return;
       }
-
-      await connect();
 
       // Check if the place exists
       const place = await placeModel.findById(id);
@@ -271,9 +248,6 @@ export async function deletePlaceById(req: Request, res: Response): Promise<void
    }
    catch (err) {
       res.status(500).json({ error: 'Error deleting place! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 

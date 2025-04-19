@@ -5,7 +5,6 @@ import Joi, { ValidationResult } from 'joi';
 
 import { countryImagesModel } from '../models/countryImagesModel';
 import { CountryImages } from '../interfaces/countryImages';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Create a new country with images
@@ -30,8 +29,6 @@ export async function createCountryWithImages(req: Request, res: Response): Prom
          };
       });
 
-      await connect();
-
       // Check if the country already exists
       const existingCountry = await countryImagesModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
       if (existingCountry) {
@@ -52,9 +49,6 @@ export async function createCountryWithImages(req: Request, res: Response): Prom
    catch (err) {
       res.status(500).json({ error: 'Error creating a country with images! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -64,16 +58,11 @@ export async function createCountryWithImages(req: Request, res: Response): Prom
  */
 export async function getAllCountriesWithImages(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
-
       const countries = await countryImagesModel.find({});
       res.status(200).json({ error: null, data: countries });
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all countries with images! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -92,8 +81,6 @@ export async function getCountriesWithImagesByQuery(req: Request, res: Response)
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let countries;
 
@@ -114,9 +101,6 @@ export async function getCountriesWithImagesByQuery(req: Request, res: Response)
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting countries with images by query! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -149,8 +133,6 @@ export async function updateCountryWithImagesById(req: Request, res: Response): 
          return;
       }
 
-      await connect();
-
       // Check if the country exists with the same name
       const existingCountry = await countryImagesModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
 
@@ -171,9 +153,6 @@ export async function updateCountryWithImagesById(req: Request, res: Response): 
    catch (err) {
       res.status(500).json({ error: 'Error updating a country with images! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -190,8 +169,6 @@ export async function deleteCountryWithImagesById(req: Request, res: Response): 
          return;
       }
 
-      await connect();
-
       // Check if the country exists
       const country = await countryImagesModel.findByIdAndDelete(id);
       if (!country) {
@@ -204,9 +181,6 @@ export async function deleteCountryWithImagesById(req: Request, res: Response): 
    }
    catch (err) {
       res.status(500).json({ error: 'Error deleting a country with images! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 

@@ -5,7 +5,6 @@ import Joi, { ValidationResult } from 'joi';
 
 import { cityImagesModel } from '../models/cityImagesModel';
 import { CityImages } from '../interfaces/cityImages';
-import { connect, disconnect } from '../repository/database';
 
 /**
  * Create a new city with images
@@ -31,8 +30,6 @@ export async function createCityWithImages(req: Request, res: Response): Promise
          };
       });
 
-      await connect();
-
       // Check if the city already exists
       const existingCity = await cityImagesModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' }, country: { $regex: `^${req.body.country.trim()}$`, $options: 'i' } });
       if (existingCity) {
@@ -54,9 +51,6 @@ export async function createCityWithImages(req: Request, res: Response): Promise
    catch (err) {
       res.status(500).json({ error: 'Error creating a city with images! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -66,16 +60,11 @@ export async function createCityWithImages(req: Request, res: Response): Promise
  */
 export async function getAllCitiesWithImages(req: Request, res: Response): Promise<void> {
    try {
-      await connect();
-
       const cities = await cityImagesModel.find({});
       res.status(200).json({ error: null, data: cities });
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting all cities with images! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -94,8 +83,6 @@ export async function getCitiesWithImagesByQuery(req: Request, res: Response): P
          res.status(400).json({ error: 'Field and value are required!' });
          return;
       }
-
-      await connect();
 
       let cities;
 
@@ -116,9 +103,6 @@ export async function getCitiesWithImagesByQuery(req: Request, res: Response): P
    }
    catch (err) {
       res.status(500).json({ error: 'Error getting cities with images by query! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
@@ -152,8 +136,6 @@ export async function updateCityWithImagesById(req: Request, res: Response): Pro
          return;
       }
 
-      await connect();
-
       // Check if the city exists with the same name and country
       const existingCity = await cityImagesModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' }, country: { $regex: `^${req.body.country.trim()}$`, $options: 'i' } });
 
@@ -174,9 +156,6 @@ export async function updateCityWithImagesById(req: Request, res: Response): Pro
    catch (err) {
       res.status(500).json({ error: 'Error updating a city with images! Error: ' + err });
    }
-   finally {
-      await disconnect();
-   }
 }
 
 /**
@@ -193,8 +172,6 @@ export async function deleteCityWithImagesById(req: Request, res: Response): Pro
          return;
       }
 
-      await connect();
-
       // Check if the city exists
       const city = await cityImagesModel.findByIdAndDelete(id);
       if (!city) {
@@ -207,9 +184,6 @@ export async function deleteCityWithImagesById(req: Request, res: Response): Pro
    }
    catch (err) {
       res.status(500).json({ error: 'Error deleting a city with images! Error: ' + err });
-   }
-   finally {
-      await disconnect();
    }
 }
 
