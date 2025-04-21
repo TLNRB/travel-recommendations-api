@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import xss from 'xss';
-import Joi, { ValidationResult } from 'joi';
+import Joi, { func, ValidationResult } from 'joi';
 
 import { placeModel } from '../models/placeModel';
 import { userModel } from '../models/userModel';
@@ -221,6 +221,13 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
  */
 export async function updatePlaceImagesById(req: Request, res: Response): Promise<void> {
    try {
+      // Validate user input
+      const { error } = validateImagesData(req.body.images);
+      if (error) {
+         res.status(400).json({ error: error.details[0].message });
+         return;
+      }
+
       // Sanitize user input and id
       const id = xss(req.params.id);
       req.body.images = req.body.images.map((image: string) => xss(image));
@@ -290,7 +297,7 @@ function validatePlaceData(data: Place): ValidationResult {
    const schema = Joi.object({
       name: Joi.string().min(2).max(255).required(),
       description: Joi.string().min(2).max(500).required(),
-      images: Joi.array().items(Joi.string()).required(),
+      images: Joi.array().items(Joi.string().uri()).required(),
       location: Joi.object({
          continent: Joi.string().min(2).max(100).required(),
          country: Joi.string().min(2).max(100).required(),
@@ -305,4 +312,10 @@ function validatePlaceData(data: Place): ValidationResult {
    })
 
    return schema.validate(data)
+}
+
+function validateImagesData(data: string[]): ValidationResult {
+   const schema = Joi.array().items(Joi.string().uri()).required();
+
+   return schema.validate(data);
 }
