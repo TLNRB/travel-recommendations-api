@@ -215,6 +215,37 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
 }
 
 /**
+ * Update place images by id
+ * @param req 
+ * @param res 
+ */
+export async function updatePlaceImagesById(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize user input and id
+      const id = xss(req.params.id);
+      req.body.images = req.body.images.map((image: string) => xss(image));
+
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+         res.status(400).json({ error: 'Invalid place Id format' });
+         return;
+      }
+
+      // Check if the place exists
+      const result = await placeModel.findByIdAndUpdate(id, { images: req.body.images });
+      if (!result) {
+         res.status(404).json({ error: 'Place not found with id=' + id });
+         return;
+      }
+      else {
+         res.status(200).json({ error: null, message: 'Place images updated successfully!' });
+      }
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error updating place images! Error: ' + err });
+   }
+}
+
+/**
  * Delete a place by id
  * @param req 
  * @param res 

@@ -4,7 +4,7 @@ import { Router, Request, Response } from 'express';
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
-import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, deletePlaceById } from './controllers/placeController';
+import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, updatePlaceImagesById, deletePlaceById } from './controllers/placeController';
 import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
 import { createCollection, deleteCollectionById, getAllCollections, getCollectionsByQuery, updateCollectionById } from './controllers/collectionController';
 import { createCityWithImages, getAllCitiesWithImages, getCitiesWithImagesByQuery, updateCityWithImagesById, deleteCityWithImagesById } from './controllers/cityImagesController'
@@ -342,6 +342,45 @@ router.get('/places/query', getPlacesByQuery);
  *                   type: string
  */
 router.put('/places/:id', verifyToken, updatePlaceById);
+/**
+ * @swagger
+ * /places/{id}:
+ *   put:
+ *     tags:
+ *       - Place Routes
+ *     summary: Update images of a specific place
+ *     description: Takes an image array in the body and updates a place's images in the database based on its Id.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the place to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: Place images updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/places/images/:id', verifyToken, updatePlaceImagesById);
 /**
  * @swagger
  * /places/{id}:
