@@ -344,7 +344,7 @@ router.get('/places/query', getPlacesByQuery);
 router.put('/places/:id', verifyToken, updatePlaceById);
 /**
  * @swagger
- * /places/{id}:
+ * /places/images/{id}:
  *   put:
  *     tags:
  *       - Place Routes
