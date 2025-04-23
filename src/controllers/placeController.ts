@@ -5,6 +5,7 @@ import Joi, { func, ValidationResult } from 'joi';
 
 import { placeModel } from '../models/placeModel';
 import { userModel } from '../models/userModel';
+import { roleModel } from '../models/roleModel';
 import { recommendationModel } from '../models/recommendationModel';
 import { Place } from '../interfaces/place';
 
@@ -49,9 +50,14 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
 
       // Check the users role and create a new place object
       let placeObject;
-      const user = await userModel.findById(req.body._createdBy).populate('role', 'name');
+      // Find user by id
+      const user = await userModel.findById(req.body._createdBy);
+      // Find role by id and retrive permissions
+      const role = await roleModel.findById(user!.role).populate('permissions');
+      // Check if the user has the permission to manage a place
+      const hasPermission = role!.permissions.find((permission: any) => permission.name === 'content:managePlaces');
 
-      if ((user!.role as any).name !== 'admin' && (user!.role as any) !== 'editor') {
+      if (!hasPermission) {
          placeObject = new placeModel({
             name: req.body.name,
             description: req.body.description,
@@ -301,9 +307,9 @@ function validatePlaceData(data: Place): ValidationResult {
       location: Joi.object({
          continent: Joi.string().min(2).max(100).required(),
          country: Joi.string().min(2).max(100).required(),
-         city: Joi.string().min(2).max(100).required(),
-         street: Joi.string().min(2).max(100).required(),
-         streetNumber: Joi.string().min(1).max(10).required()
+         city: Joi.string().min(2).max(100).optional().default(''),
+         street: Joi.string().min(2).max(100).optional().default(''),
+         streetNumber: Joi.string().min(1).max(10).optional().default('')
       }).required(),
       upvotes: Joi.number().required().default(0),
       tags: Joi.array().items(Joi.string()).required(),

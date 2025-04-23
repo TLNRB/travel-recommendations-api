@@ -52,7 +52,7 @@ export async function seedData(): Promise<void> {
    // Create permissions
    const permissions = [
       { name: "user:assignRoles", description: "Allows to assign roles to another user", },
-      { name: "content:managePlace", description: "Allows to approve or decline a suggested place" }
+      { name: "content:managePlaces", description: "Allows to manage the content of a place/place request, adding, editing and deleting." }
    ];
    await permissionModel.insertMany(permissions);
 

@@ -8,9 +8,9 @@ const placeSchema = new Schema<Place>({
    location: {
       continent: { type: String, required: true, min: 2, max: 100 },
       country: { type: String, required: true, min: 2, max: 100 },
-      city: { type: String, required: true, min: 2, max: 100 },
-      street: { type: String, required: true, min: 2, max: 100 },
-      streetNumber: { type: String, required: true, min: 1, max: 10 },
+      city: { type: String, min: 2, max: 100, default: '' },
+      street: { type: String, min: 2, max: 100, default: '' },
+      streetNumber: { type: String, min: 1, max: 10, default: '' },
    },
    upvotes: { type: Number, required: true, default: 0 },
    tags: { type: [String], required: true },
