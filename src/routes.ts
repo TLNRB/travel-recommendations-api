@@ -13,7 +13,7 @@ import { getAllUsers, getUsersByQuery, updateUserById } from './controllers/user
 
 const router: Router = Router();
 
-// Welcome route
+// Welcome route 
 /**
  * @swagger
  * /:
