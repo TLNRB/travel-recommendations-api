@@ -139,7 +139,7 @@ export async function updateCityWithImagesById(req: Request, res: Response): Pro
       // Check if the city exists with the same name and country
       const existingCity = await cityImagesModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' }, country: { $regex: `^${req.body.country.trim()}$`, $options: 'i' } });
 
-      if (existingCity && existingCity._id !== id) {
+      if (existingCity && existingCity._id != id) {
          res.status(400).json({ error: 'City in this country with this name already exists!' });
          return;
       }

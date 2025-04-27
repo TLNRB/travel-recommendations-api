@@ -137,7 +137,7 @@ export async function updateRoleById(req: Request, res: Response): Promise<void>
 
       // Check if the role already exists
       const existingRole = await roleModel.findOne({ name: { $regex: `^${req.body.name.trim()}$`, $options: 'i' } });
-      if (existingRole && existingRole._id !== id) {
+      if (existingRole && existingRole._id != id) {
          res.status(400).json({ error: 'Role with this name already exists!' });
          return;
       }
