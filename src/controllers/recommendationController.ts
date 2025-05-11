@@ -209,7 +209,7 @@ function validateRecommendationData(data: Recommendation): ValidationResult {
  */
 function populateRecommendations(query: any, populateCreatedBy: boolean, populatePlace: boolean) {
    if (populateCreatedBy) query = query.populate('_createdBy', 'firstName lastName username profilePicture role');
-   if (populatePlace) query = query.populate('place', 'name images location');
+   if (populatePlace) query = query.populate('place', 'name images location approved');
 
    return query;
 }
