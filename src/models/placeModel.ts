@@ -12,7 +12,7 @@ const placeSchema = new Schema<Place>({
       street: { type: String, min: 2, max: 100, default: '' },
       streetNumber: { type: String, min: 1, max: 10, default: '' },
    },
-   upvotes: { type: Number, required: true, default: 0 },
+   upvotes: { type: [Schema.Types.ObjectId], required: true, default: [] },
    tags: { type: [String], required: true },
    approved: { type: Boolean, required: true, default: false },
    _createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true }

@@ -8,5 +8,5 @@ export interface Recommendation extends Document {
    dateOfVisit: Date,
    dateOfWriting: Date,
    rating: number,
-   upvotes: number
+   upvotes: Schema.Types.ObjectId[]
 }

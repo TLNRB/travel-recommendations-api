@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import xss from 'xss';
 import Joi, { ValidationResult } from 'joi';
 
+
+import { userModel } from '../models/userModel';
 import { recommendationModel } from '../models/recommendationModel';
 import { Recommendation } from '../interfaces/recommendation';
 
@@ -85,7 +87,7 @@ export async function getRecommendationsByQuery(req: Request, res: Response): Pr
       let recommendations;
 
       // Check if the field is _createdBy or place or _id
-      if (field === '_id' || field === '_createdBy' || field === 'place') {
+      if (field === '_id' || field === '_createdBy' || field === 'place' || field === 'upvotes') {
          if (!mongoose.Types.ObjectId.isValid(value)) {
             res.status(400).json({ error: 'Invalid Id format!' });
             return;
@@ -137,7 +139,7 @@ export async function updateRecommendationById(req: Request, res: Response): Pro
          return;
       }
 
-      const { _createdBy, place, dateOfWriting, ...safeBody } = req.body; // Exclude _createdBy, place, dateOfWriting from the body
+      const { _createdBy, place, dateOfWriting, upvotes, ...safeBody } = req.body; // Exclude _createdBy, place, dateOfWriting from the body
 
       // Check if the recommendation exists
       const result = await recommendationModel.findByIdAndUpdate(id, safeBody);
@@ -151,6 +153,60 @@ export async function updateRecommendationById(req: Request, res: Response): Pro
    }
    catch (err) {
       res.status(500).json({ error: 'Error updating a recommendation! Error: ' + err });
+   }
+}
+
+/**
+ * Update recommendation upvotes
+ * @param req 
+ * @param res 
+ */
+
+export async function updateRecommendationUpvotes(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize id
+      const id = xss(req.params.id);
+      const userId = xss(req.body.userId);
+
+      if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
+         res.status(400).json({ error: 'Invalid Id format' });
+         return;
+      }
+
+      // Check if the recommendation exists
+      const recommendation = await recommendationModel.findById(id);
+
+      if (!recommendation) {
+         res.status(404).json({ error: 'Recommendation not found with id=' + id });
+         return;
+      }
+
+      const userIdStr = String(userId);
+      const upvotes = recommendation.upvotes.map((id) => String(id));
+
+      // If the userId is already in the upvotes array, remove it
+      if (upvotes.includes(userIdStr)) {
+         recommendation.upvotes = recommendation.upvotes.filter((upvote) => String(upvote) !== userIdStr);
+      }
+      // If the userId is not in the upvotes array, add it
+      else {
+         // Find user by id
+         const user = await userModel.findById(userIdStr);
+
+         if (!user) {
+            res.status(404).json({ error: 'User not found with id=' + req.body._createdBy });
+            return;
+         }
+
+         recommendation.upvotes.push(new mongoose.Types.ObjectId(userIdStr) as any);
+      }
+
+      await recommendation.save();
+      res.status(200).json({ error: null, message: 'Recommendation upvotes updated successfully!' });
+
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error updating recommendation upvotes! Error: ' + err });
    }
 }
 
@@ -195,7 +251,7 @@ function validateRecommendationData(data: Recommendation): ValidationResult {
       content: Joi.string().min(2).max(500).required(),
       dateOfVisit: Joi.date().required(),
       rating: Joi.number().required().min(1).max(5),
-      upvotes: Joi.number().required().default(0)
+      upvotes: Joi.array().items(Joi.string()).required()
    })
 
    return schema.validate(data)

@@ -11,7 +11,7 @@ export interface Place extends Document {
       street?: string,
       streetNumber?: string
    },
-   upvotes: number,
+   upvotes: Schema.Types.ObjectId[],
    tags: string[],
    approved: boolean,
    _createdBy: Schema.Types.ObjectId

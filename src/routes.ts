@@ -4,8 +4,8 @@ import { Router, Request, Response } from 'express';
 import { loginUser, registerUser, verifyToken } from './controllers/authController';
 import { getAllPermissions, getPermissionsByQuery } from './controllers/permissionController';
 import { createRole, deleteRoleById, getAllRoles, getRolesByQuery, updateRoleById } from './controllers/roleController';
-import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, updatePlaceImagesById, deletePlaceById } from './controllers/placeController';
-import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, deleteRecommendationById } from './controllers/recommendationController';
+import { createPlace, getAllPlaces, getPlacesByQuery, updatePlaceById, updatePlaceImagesById, updatePlaceUpvotes, deletePlaceById } from './controllers/placeController';
+import { createRecommendation, getAllRecommendations, getRecommendationsByQuery, updateRecommendationById, updateRecommendationUpvotes, deleteRecommendationById } from './controllers/recommendationController';
 import { createCollection, deleteCollectionById, getAllCollections, getCollectionsByQuery, updateCollectionById } from './controllers/collectionController';
 import { createCityWithImages, getAllCitiesWithImages, getCitiesWithImagesByQuery, updateCityWithImagesById, deleteCityWithImagesById } from './controllers/cityImagesController'
 import { createCountryWithImages, getAllCountriesWithImages, getCountriesWithImagesByQuery, updateCountryWithImagesById, deleteCountryWithImagesById } from './controllers/countryImagesController';
@@ -344,6 +344,49 @@ router.get('/places/query', getPlacesByQuery);
 router.put('/places/:id', verifyToken, updatePlaceById);
 /**
  * @swagger
+ * /places/upvotes/{id}:
+ *   put:
+ *     tags:
+ *       - Place Routes
+ *     summary: Update an upvote of a specific place
+ *     description: Takes a userId in the body and either removes or adds an upvote based on if it was already upvoted by the user or not.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the place's upvotes to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: 64ff90a3cd985da33f14c3c2
+ *             required:
+ *               - userId
+ *     responses:
+ *       200:
+ *         description: Place's upvotes updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/places/upvotes/:id', verifyToken, updatePlaceUpvotes);
+/**
+ * @swagger
  * /places/images/{id}:
  *   put:
  *     tags:
@@ -573,6 +616,49 @@ router.get('/recommendations/query', getRecommendationsByQuery);
  *                   type: string
  */
 router.put('/recommendations/:id', verifyToken, updateRecommendationById);
+/**
+ * @swagger
+ * /recommendations/upvotes/{id}:
+ *   put:
+ *     tags:
+ *       - Recommendation Routes
+ *     summary: Update an upvote of a specific recommendation
+ *     description: Takes a userId in the body and either removes or adds an upvote based on if it was already upvoted by the user or not.
+ *     security:
+ *       - ApiKeyAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Id of the recommendation's upvotes to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: 64ff90a3cd985da33f14c3c2
+ *             required:
+ *               - userId
+ *     responses:
+ *       200:
+ *         description: Recommendation's upvotes updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.put('/recommendations/upvotes/:id', verifyToken, updateRecommendationUpvotes);
 /**
  * @swagger
  * /recommendations/{id}:

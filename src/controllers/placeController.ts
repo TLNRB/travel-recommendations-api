@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import xss from 'xss';
-import Joi, { func, ValidationResult } from 'joi';
+import Joi, { ValidationResult } from 'joi';
 
 import { placeModel } from '../models/placeModel';
 import { userModel } from '../models/userModel';
@@ -85,7 +85,6 @@ export async function createPlace(req: Request, res: Response): Promise<void> {
                street: req.body.location.street,
                streetNumber: req.body.location.streetNumber
             },
-            upvotes: req.body.upvotes,
             tags: req.body.tags,
             approved: req.body.approved,
             _createdBy: req.body._createdBy
@@ -135,7 +134,7 @@ export async function getPlacesByQuery(req: Request, res: Response): Promise<voi
       let places;
 
       // Check if the field is id
-      if (field === '_id' || field === '_createdBy') {
+      if (field === '_id' || field === '_createdBy' || field === 'upvotes') {
          if (!mongoose.Types.ObjectId.isValid(value)) {
             res.status(400).json({ error: 'Invalid Id format!' });
             return;
@@ -144,7 +143,7 @@ export async function getPlacesByQuery(req: Request, res: Response): Promise<voi
          places = await placeModel.findById({ [field]: value });
       }
       // Else if needed as a numebr or boolean can't be checked with regex and options
-      else if (field === 'approved' || field === 'upvotes') {
+      else if (field === 'approved') {
          places = await placeModel.find({ [field]: value });
       }
       else {
@@ -184,6 +183,7 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
          street: xss(street),
          streetNumber: xss(streetNumber)
       };
+      // Maybe sanitize the upvotes array (?) - might not be a good idea if there would be 1000 of them
       req.body.tags = req.body.tags.map((tag: string) => xss(tag));
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -191,7 +191,7 @@ export async function updatePlaceById(req: Request, res: Response): Promise<void
          return;
       }
 
-      const { _createdBy, ...safeBody } = req.body; // Exclude _createdBy from the update object
+      const { _createdBy, upvotes, ...safeBody } = req.body; // Exclude _createdBy from the update object
 
       // Check if the city exists with the same name and country
       const existingPlace = await placeModel.findOne({
@@ -259,6 +259,60 @@ export async function updatePlaceImagesById(req: Request, res: Response): Promis
 }
 
 /**
+ * Update place upvotes
+ * @param req 
+ * @param res 
+ */
+
+export async function updatePlaceUpvotes(req: Request, res: Response): Promise<void> {
+   try {
+      // Sanitize id
+      const id = xss(req.params.id);
+      const userId = xss(req.body.userId);
+
+      if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
+         res.status(400).json({ error: 'Invalid Id format' });
+         return;
+      }
+
+      // Check if the recommendation exists
+      const place = await placeModel.findById(id);
+
+      if (!place) {
+         res.status(404).json({ error: 'Place not found with id=' + id });
+         return;
+      }
+
+      const userIdStr = String(userId);
+      const upvotes = place.upvotes.map((id) => String(id));
+
+      // If the userId is already in the upvotes array, remove it
+      if (upvotes.includes(userIdStr)) {
+         place.upvotes = place.upvotes.filter((upvote) => String(upvote) !== userIdStr);
+      }
+      // If the user is not in the upvotes array, add them
+      else {
+         // Find user by id
+         const user = await userModel.findById(userIdStr);
+
+         if (!user) {
+            res.status(404).json({ error: 'User not found with id=' + req.body._createdBy });
+            return;
+         }
+
+         place.upvotes.push(new mongoose.Types.ObjectId(userIdStr) as any);
+      }
+
+      await place.save();
+      res.status(200).json({ error: null, message: 'Place upvotes updated successfully!' });
+
+   }
+   catch (err) {
+      res.status(500).json({ error: 'Error updating place upvotes! Error: ' + err });
+   }
+}
+
+/**
  * Delete a place by id
  * @param req 
  * @param res 
@@ -311,7 +365,7 @@ function validatePlaceData(data: Place): ValidationResult {
          street: Joi.string().min(2).max(100).optional().default(''),
          streetNumber: Joi.string().min(1).max(10).optional().default('')
       }).required(),
-      upvotes: Joi.number().required().default(0),
+      upvotes: Joi.array().items(Joi.string()).required(),
       tags: Joi.array().items(Joi.string()).required(),
       approved: Joi.boolean().required().default(false),
       _createdBy: Joi.string().required()

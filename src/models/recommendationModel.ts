@@ -9,7 +9,7 @@ const recommendationSchema = new Schema<Recommendation>({
    dateOfVisit: { type: Date, required: true },
    dateOfWriting: { type: Date, required: true, default: Date.now },
    rating: { type: Number, required: true, min: 1, max: 5 },
-   upvotes: { type: Number, required: true, default: 0 }
+   upvotes: { type: [Schema.Types.ObjectId], required: true, default: [] }
 })
 
 export const recommendationModel = model<Recommendation>('Recommendation', recommendationSchema);

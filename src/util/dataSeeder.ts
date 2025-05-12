@@ -158,7 +158,7 @@ export async function seedData(): Promise<void> {
          street: "Andrassy ut",
          streetNumber: "123"
       },
-      upvotes: 16,
+      upvotes: [],
       tags: ["tag1", "tag2"],
       approved: true,
       _createdBy: user1._id
@@ -176,7 +176,7 @@ export async function seedData(): Promise<void> {
          street: "Pine Street",
          streetNumber: "22"
       },
-      upvotes: 0,
+      upvotes: [],
       tags: ["tag1", "tag2"],
       approved: true,
       _createdBy: user2._id
@@ -194,7 +194,7 @@ export async function seedData(): Promise<void> {
          street: "Baker Street",
          streetNumber: "1A"
       },
-      upvotes: 5,
+      upvotes: [],
       tags: ["tag1", "tag2"],
       approved: true,
       _createdBy: user3._id
@@ -212,7 +212,7 @@ export async function seedData(): Promise<void> {
          street: "Shibuya",
          streetNumber: "45"
       },
-      upvotes: 0,
+      upvotes: [],
       tags: ["tag1", "tag2"],
       approved: false,
       _createdBy: user4._id
@@ -228,7 +228,7 @@ export async function seedData(): Promise<void> {
       dateOfVisit: "2023-01-01",
       dateOfWriting: new Date(),
       rating: 4,
-      upvotes: 10
+      upvotes: []
    },
    {
       _createdBy: user2._id,
@@ -238,7 +238,7 @@ export async function seedData(): Promise<void> {
       dateOfVisit: "2023-02-01",
       dateOfWriting: new Date(),
       rating: 5,
-      upvotes: 20
+      upvotes: []
    },
    {
       _createdBy: user3._id,
@@ -248,7 +248,7 @@ export async function seedData(): Promise<void> {
       dateOfVisit: "2023-03-01",
       dateOfWriting: new Date(),
       rating: 3,
-      upvotes: 5
+      upvotes: []
    },
    {
       _createdBy: user4._id,
@@ -258,7 +258,7 @@ export async function seedData(): Promise<void> {
       dateOfVisit: "2023-04-01",
       dateOfWriting: new Date(),
       rating: 2,
-      upvotes: 0
+      upvotes: []
    }];
    await recommendationModel.insertMany(recommendations);
 

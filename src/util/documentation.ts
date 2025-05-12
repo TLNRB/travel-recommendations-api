@@ -137,7 +137,10 @@ export function setupDocs(app: Application): void {
                         streetNumber: { type: 'string' }
                      }
                   },
-                  upvotes: { type: 'number' },
+                  upvotes: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  },
                   tags: {
                      type: 'array',
                      items: { type: 'string' }
@@ -165,7 +168,10 @@ export function setupDocs(app: Application): void {
                         streetNumber: { type: 'string' }
                      }
                   },
-                  upvotes: { type: 'number' },
+                  upvotes: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  },
                   tags: {
                      type: 'array',
                      items: { type: 'string' }
@@ -184,7 +190,10 @@ export function setupDocs(app: Application): void {
                   dateOfVisit: { type: 'string' },
                   dateOfWriting: { type: 'string' },
                   rating: { type: 'number' },
-                  upvotes: { type: 'number' }
+                  upvotes: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  }
                }
             },
             RecommendationPopulated: {
@@ -197,7 +206,10 @@ export function setupDocs(app: Application): void {
                   dateOfVisit: { type: 'string' },
                   dateOfWriting: { type: 'string' },
                   rating: { type: 'number' },
-                  upvotes: { type: 'number' }
+                  upvotes: {
+                     type: 'array',
+                     items: { type: 'string' }
+                  }
                }
             },
             CollectionUnpopulated: {
